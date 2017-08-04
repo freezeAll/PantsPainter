@@ -19,31 +19,37 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
+#include <painter.hpp>
 
 QT_BEGIN_NAMESPACE
 
 class Ui_PantsPainterClass
 {
 public:
+    QWidget *centralWidget;
+    Painter *openGLWidget;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
-    QWidget *centralWidget;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *PantsPainterClass)
     {
         if (PantsPainterClass->objectName().isEmpty())
             PantsPainterClass->setObjectName(QStringLiteral("PantsPainterClass"));
-        PantsPainterClass->resize(600, 400);
+        PantsPainterClass->resize(600, 494);
+        centralWidget = new QWidget(PantsPainterClass);
+        centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        openGLWidget = new Painter(centralWidget);
+        openGLWidget->setObjectName(QStringLiteral("openGLWidget"));
+        openGLWidget->setGeometry(QRect(10, 10, 400, 400));
+        PantsPainterClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PantsPainterClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 600, 23));
         PantsPainterClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(PantsPainterClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
-        PantsPainterClass->addToolBar(mainToolBar);
-        centralWidget = new QWidget(PantsPainterClass);
-        centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        PantsPainterClass->setCentralWidget(centralWidget);
+        PantsPainterClass->addToolBar(Qt::TopToolBarArea, mainToolBar);
         statusBar = new QStatusBar(PantsPainterClass);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         PantsPainterClass->setStatusBar(statusBar);
