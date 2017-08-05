@@ -2,13 +2,28 @@
 
 Painter::Painter(QWidget * parent) : QOpenGLWidget(parent) 
 {
-	refresh = new QTimer(this);
+	refresh = new QTimer(parent);
+	refresh_time = 1;
 	refresh->start(refresh_time);
 
 	backgroud_color.setRedF(0.156);
 	backgroud_color.setGreenF(0.156);
 	backgroud_color.setBlueF(0.168);
 	backgroud_color.setAlphaF(0.0);
+
+	view_left = -100;
+	view_right = 100;
+	view_bottom = -100;
+	view_up = 100;
+
+	axis_length = 10.0;
+
+	eye.setX(100); eye.setY(0); eye.setZ(0);
+	up.setX(0); up.setY(0); up.setZ(1);
+	view.setX(0); view.setY(0); view.setZ(0);
+	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
+	aux_z = eye - view;
+	aux_x = QVector3D::crossProduct(aux_y,aux_z);
 
 	connect(refresh, SIGNAL(timeout()), this, SLOT(refresh_gl()));
 }
@@ -20,7 +35,10 @@ Painter::~Painter()
 
 void Painter::refresh_gl()
 {
+	
+	this->update();
 	refresh->start(refresh_time);
+
 }
 
 void Painter::initializeGL()
@@ -35,59 +53,61 @@ void Painter::initializeGL()
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	draw_axis();
+
+	
+	
 }
 void Painter::paintGL()
 {
 	glLoadIdentity();
-	glOrtho(-1000 / 2, 1000 / 2, -1000 / 2, 1000 / 2, -1000 / 2, 1000 / 2);
+
+	glViewport(0, -(this->width() - this->height()) / 2, this->width(), this->width());
+
+	glOrtho(view_left, view_right,view_bottom, view_up, -200 / 2, 200 / 2);
 
 	glClearColor(backgroud_color.redF(), backgroud_color.greenF(), backgroud_color.blueF(), backgroud_color.alphaF());
 
+	//
+	draw_model();
 
-	glCallList(list_axis);
-	glCallList(list_path);
-	glCallList(list_points);
-}
-void Painter::resizeGL(int width, int height)
-{
+
 	
+	gluLookAt(eye.x(), eye.y(), eye.z(), view.x(), view.y(), view.z(), up.x(), up.y(), up.z());
+	glCallList(list_model);
+	
+
+}
+void Painter::resizeGL(int w, int h)
+{
+	glViewport(0, -(w - h) / 2, w, w);
 }
 
-void Painter::draw_axis()
+void Painter::draw_model()
 {
-	list_axis = glGenLists(1);
-	glNewList(list_axis, GL_COMPILE);
+	list_model = glGenLists(1);
+	glNewList(list_model, GL_COMPILE);
 	/*红色轴是X轴，绿色是Y轴，蓝色是Z轴*/
-	double length = 50.0;
+	
 
 	glLineWidth(5);
 	glBegin(GL_LINES);
 	glColor3d(1.0, 0.0, 0.0);
 	glVertex3d(0.0, 0.0, 0.0);
-	glVertex3d(length, 0.0, 0.0);
+	glVertex3d(axis_length, 0.0, 0.0);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glColor3d(0.0, 1.0, 0.0);
 	glVertex3d(0.0, 0.0, 0.0);
-	glVertex3d(0.0, length, 0.0);
+	glVertex3d(0.0, axis_length, 0.0);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glColor3d(0.0, 0.0, 1.0);
 	glVertex3d(0.0, 0.0, 0.0);
-	glVertex3d(0.0, 0.0, length);
+	glVertex3d(0.0, 0.0, axis_length);
 	glEnd();
 
-
-	glEndList();
-}
-
-void Painter::draw_path()
-{
-	list_path = glGenLists(2);
-	glNewList(list_axis, GL_COMPILE);
 	if (!path.isEmpty())
 	{
 		for (int i = 0; i < path.size(); i++)
@@ -102,21 +122,21 @@ void Painter::draw_path()
 				glVertex3d(path[i][l].x(), path[i][l].y(), path[i][l].z());
 				glEnd();
 			}
+			glBegin(GL_LINES);
+			glColor3d(path_property[i].second.redF(),
+				path_property[i].second.greenF(), path_property[i].second.blueF());
+			glVertex3d(path[i][path[i].size() - 1].x(), path[i][path[i].size() - 1].y(), path[i][path[i].size() - 1].z());
+			glVertex3d(path[i][0].x(), path[i][0].y(), path[i][0].z());
+			glEnd();
 
 		}
 	}
-	glEndList();
-}
 
-void Painter::draw_points()
-{
-	list_points = glGenLists(3);
-	glNewList(list_points, GL_COMPILE);
 	if (!points.isEmpty())
 	{
 		for (int i = 0; i < points.size(); i++)
 		{
-			
+
 			glBegin(GL_POINTS);
 			glPointSize(points_property[i].first);
 			glColor3d(points_property[i].second.redF(),
@@ -124,16 +144,33 @@ void Painter::draw_points()
 			for (int k = 0; k < points[i].size(); k++)
 			{
 
-				glVertex3d(path[i][k].x(), path[i][k].y(), path[i][k].z());
-				
+				glVertex3d(points[i][k].x(), points[i][k].y(), points[i][k].z());
+
 			}
 			glEnd();
+
 		}
 	}
 	glEndList();
 }
 
-void Painter::add_path(QVector<QVector3D> p,double w = 1.0,QColor c = QColor(255,255,255))
+//void Painter::draw_path()
+//{
+//	list_path = glGenLists(2);
+//	glNewList(list_axis, GL_COMPILE);
+//	
+//	glEndList();
+//}
+//
+//void Painter::draw_points()
+//{
+//	list_points = glGenLists(3);
+//	glNewList(list_points, GL_COMPILE);
+//	
+//	glEndList();
+//}
+
+void Painter::add_path(QVector<QVector3D> p,double w,QColor c)
 {
 	path.push_back(p);
 	path_property.push_back(std::pair<double, QColor>(w, c));
@@ -153,10 +190,10 @@ void Painter::add_a_pathpoint(QVector3D p, int k)
 }
 
 
-void Painter::add_points(QVector<QVector3D> p, double s = 1.0, QColor c  = QColor(255, 255, 255))
+void Painter::add_points(QVector<QVector3D> p, double s, QColor c)
 {
 	points.push_back(p);
-	path_property.push_back(std::pair<double, QColor>(s, c));
+	points_property.push_back(std::pair<double, QColor>(s, c));
 }
 
 
@@ -277,7 +314,7 @@ bool Painter::get_points_property(int k, double &s, QColor &c)
 	}
 }
 
-bool Painter::set_refresh_time(unsigned int t)
+void Painter::set_refresh_time(unsigned int t)
 {
 	refresh_time = t;
 }
@@ -287,8 +324,81 @@ void Painter::set_background_color(QColor c)
 	backgroud_color = c;
 }
 
+void Painter::set_axis_length(double l)
+{
+	axis_length = l;
+}
+
 QColor Painter::get_background_color()
 {
 	return backgroud_color;
 }
 
+void Painter::mousePressEvent(QMouseEvent *e)
+{
+	moved_point = e->pos();
+	start_point = moved_point;
+	
+}
+
+void Painter::mouseMoveEvent(QMouseEvent *e)
+{
+	if (e->buttons() & Qt::MiddleButton)
+	{
+		moved_point = e->pos();
+		rotate_model();
+		
+		//QMessageBox::information(0, "1", "1", 1024);
+	}
+}
+
+void Painter::mouseReleaseEvent(QMouseEvent *e)
+{
+
+}
+
+void Painter::rotate_model()
+{
+	QVector3D MouseTrace = aux_y * (start_point.y() - moved_point.y()) + aux_x * (moved_point.x() -start_point.x());
+	QVector3D RotateAsix = QVector3D::crossProduct(MouseTrace, aux_z);
+	RotateAsix.normalize();
+	double angle = MouseTrace.length();
+	QMatrix4x4 rotatMatrix;
+	rotatMatrix.rotate(angle, RotateAsix);
+
+	std::ofstream log("out.log", std::ios::app);
+	
+
+	eye = rotatMatrix * eye;
+	up = rotatMatrix * up;
+	up.normalize();
+	aux_y = up;
+	aux_z = eye - view;
+	aux_x = QVector3D::crossProduct(aux_x, aux_z);
+	aux_x.normalize();
+	start_point = moved_point;
+
+	//log << angle << std::endl;
+	//log << eye.x() <<" "<< eye.y()<<" " << eye.z() << " " << std::endl;
+	//log << view.x() << " " << view.y() << " " << view.z() << " " << std::endl;
+	//log << up.x() << " " << up.y() << " " << up.z() << " " << std::endl;
+	//
+}
+
+//QMatrix4x4 Painter::get_rotate_matrix(double angle, QVector3D vector)
+//{
+//	angle = angle / 2 * M_PI / 180;
+//	QVector3D vec = vector.normalized();
+//	double cosa = cos(angle);
+//	double sina = sin(angle);
+//	double a = vec.x() * sina;
+//	double b = vec.y() * sina;
+//	double c = vec.z() * sina;
+//	
+//	QMatrix4x4 matrix;
+//	matrix.setRow(0, QVector4D(1.0 - 2.0*(b*b + c*c), 2.0 * (a*b - c*cosa), 2.0 * (a*c + b*cosa),0));
+//	matrix.setRow(1, QVector4D(2.0 * (a*b + c*cosa), 1.0 - 2.0*(c*c + a*a), 2.0 * (b*c - a*cosa), 0));
+//	matrix.setRow(2, QVector4D(2.0 * (a*c - b*cosa), 2.0 * (b*c + a*cosa), 1.0 - 2.0*(a*a + b*b), 0));
+//	
+//	return matrix;
+//}

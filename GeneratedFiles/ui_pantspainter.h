@@ -41,7 +41,7 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         openGLWidget = new Painter(centralWidget);
         openGLWidget->setObjectName(QStringLiteral("openGLWidget"));
-        openGLWidget->setGeometry(QRect(10, 10, 400, 400));
+        openGLWidget->setGeometry(QRect(10, 10, 581, 400));
         PantsPainterClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PantsPainterClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));

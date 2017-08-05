@@ -3,7 +3,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_pantspainter.h"
-
+#include <fstream>
 class PantsPainter : public QMainWindow
 {
 	Q_OBJECT
