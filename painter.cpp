@@ -18,8 +18,10 @@ Painter::Painter(QWidget * parent) : QOpenGLWidget(parent)
 
 	axis_length = 10.0;
 
-	eye.setX(100); eye.setY(0); eye.setZ(0);
-	up.setX(0); up.setY(0); up.setZ(1);
+	rotate_speed = 0.6;
+
+	eye.setX(0); eye.setY(0); eye.setZ(1);
+	up.setX(0); up.setY(1); up.setZ(0);
 	view.setX(0); view.setY(0); view.setZ(0);
 	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
 	aux_z = eye - view;
@@ -72,7 +74,7 @@ void Painter::paintGL()
 
 
 	
-	gluLookAt(eye.x(), eye.y(), eye.z(), view.x(), view.y(), view.z(), up.x(), up.y(), up.z());
+	gluLookAt(eye.x(), eye.y(), eye.z() , view.x(), view.y(), view.z(), up.x(), up.y(), up.z());
 	glCallList(list_model);
 	
 
@@ -362,7 +364,9 @@ void Painter::rotate_model()
 	QVector3D MouseTrace = aux_y * (start_point.y() - moved_point.y()) + aux_x * (moved_point.x() -start_point.x());
 	QVector3D RotateAsix = QVector3D::crossProduct(MouseTrace, aux_z);
 	RotateAsix.normalize();
-	double angle = MouseTrace.length();
+
+	double angle = MouseTrace.length() * rotate_speed;
+
 	QMatrix4x4 rotatMatrix;
 	rotatMatrix.rotate(angle, RotateAsix);
 
@@ -374,7 +378,7 @@ void Painter::rotate_model()
 	up.normalize();
 	aux_y = up;
 	aux_z = eye - view;
-	aux_x = QVector3D::crossProduct(aux_x, aux_z);
+	aux_x = QVector3D::crossProduct(aux_y, aux_z);
 	aux_x.normalize();
 	start_point = moved_point;
 
@@ -402,3 +406,8 @@ void Painter::rotate_model()
 //	
 //	return matrix;
 //}
+
+void Painter::set_rotate_speed(unsigned int s)
+{
+	rotate_speed = s / 100.0;
+}

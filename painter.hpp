@@ -34,6 +34,8 @@ public:
 	void set_refresh_time(unsigned int);
 	void set_background_color(QColor);
 	void set_axis_length(double);
+
+	void set_rotate_speed(unsigned int);
 public slots:
 void refresh_gl();
 protected:
@@ -81,4 +83,6 @@ private:
 	QVector3D aux_x;
 	QVector3D aux_y;
 	QVector3D aux_z;
+
+	double rotate_speed;
 };
