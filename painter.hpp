@@ -9,7 +9,7 @@
 #include <QMatrix4x4>
 #include <QMessageBox>
 #include <fstream>
-#define M_PI 3.14159265358979323846
+
 class Painter : public QOpenGLWidget {
 	Q_OBJECT
 
@@ -36,8 +36,13 @@ public:
 	void set_axis_length(double);
 
 	void set_rotate_speed(unsigned int);
+
+	void zoomin(QWheelEvent*);
+	void zoomout(QWheelEvent*);
+
 public slots:
-void refresh_gl();
+	void refresh_gl();
+
 protected:
 	void initializeGL();
 	void paintGL();
@@ -46,10 +51,23 @@ protected:
 	void mousePressEvent(QMouseEvent*);
 	void mouseMoveEvent(QMouseEvent*);
 	void mouseReleaseEvent(QMouseEvent*);
+	void wheelEvent(QWheelEvent*);
 private:
-	
+	enum VIEW
+	{
+		TOP_VIEW = 0,
+		UPWARD_VIEW = 1,
+		LEFT_VIEW = 2,
+		RIGHT_VIEW = 3,
+		FORNT_VIEW = 4,
+		BEHIND_VIEW = 5
+	};
+
+
 	void draw_model();
 	void rotate_model();
+	void move_model();
+	void reset_date();
 	//QMatrix4x4 get_rotate_matrix(double, QVector3D);
 
 	int list_model;
@@ -65,6 +83,8 @@ private:
 	QVector<QVector<QVector3D>>        points;
 	QVector<std::pair<double, QColor>> points_property;
 
+	QVector<QPointF> axis_date{QPointF(0,10),QPointF(0,10) ,QPointF(0,10) };
+
 	double view_left;
 	double view_right;
 	double view_up;
@@ -74,7 +94,6 @@ private:
 
 	QPointF start_point;
 	QPointF moved_point;
-	QPointF last_points;
 
 	QVector3D eye;
 	QVector3D view;
@@ -85,4 +104,14 @@ private:
 	QVector3D aux_z;
 
 	double rotate_speed;
+	double move_speed;
+
+	
+	QVector3D log_model_vec;
+
+	bool isnot_rotated;
+
+	double log_max;
+
+	int view_log;
 };

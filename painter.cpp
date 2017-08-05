@@ -19,6 +19,13 @@ Painter::Painter(QWidget * parent) : QOpenGLWidget(parent)
 	axis_length = 10.0;
 
 	rotate_speed = 0.6;
+	move_speed = 0.3;
+
+	isnot_rotated = true;
+
+	view_log = TOP_VIEW;
+
+	log_max = 100.0;
 
 	eye.setX(0); eye.setY(0); eye.setZ(1);
 	up.setX(0); up.setY(1); up.setZ(0);
@@ -26,6 +33,8 @@ Painter::Painter(QWidget * parent) : QOpenGLWidget(parent)
 	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
 	aux_z = eye - view;
 	aux_x = QVector3D::crossProduct(aux_y,aux_z);
+
+	
 
 	connect(refresh, SIGNAL(timeout()), this, SLOT(refresh_gl()));
 }
@@ -94,20 +103,20 @@ void Painter::draw_model()
 	glLineWidth(5);
 	glBegin(GL_LINES);
 	glColor3d(1.0, 0.0, 0.0);
-	glVertex3d(0.0, 0.0, 0.0);
-	glVertex3d(axis_length, 0.0, 0.0);
+	glVertex3d(axis_date[0].x(), 0.0, 0.0);
+	glVertex3d(axis_date[0].y(), 0.0, 0.0);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glColor3d(0.0, 1.0, 0.0);
-	glVertex3d(0.0, 0.0, 0.0);
-	glVertex3d(0.0, axis_length, 0.0);
+	glVertex3d(0.0, axis_date[1].x(), 0.0);
+	glVertex3d(0.0, axis_date[1].y(), 0.0);
 	glEnd();
 
 	glBegin(GL_LINES);
 	glColor3d(0.0, 0.0, 1.0);
-	glVertex3d(0.0, 0.0, 0.0);
-	glVertex3d(0.0, 0.0, axis_length);
+	glVertex3d(0.0, 0.0, axis_date[2].x());
+	glVertex3d(0.0, 0.0, axis_date[2].y());
 	glEnd();
 
 	if (!path.isEmpty())
@@ -349,14 +358,29 @@ void Painter::mouseMoveEvent(QMouseEvent *e)
 	{
 		moved_point = e->pos();
 		rotate_model();
-		
-		//QMessageBox::information(0, "1", "1", 1024);
+	}
+	else if (e->buttons() & Qt::LeftButton)
+	{
+		moved_point = e->pos();
+		move_model();
 	}
 }
 
 void Painter::mouseReleaseEvent(QMouseEvent *e)
 {
+	
+}
 
+void Painter::wheelEvent(QWheelEvent *e)
+{
+	if (e->delta() > 0)
+	{
+		zoomin(e);
+	}
+	else if (e->delta() < 0)
+	{
+		zoomout(e);
+	}
 }
 
 void Painter::rotate_model()
@@ -371,6 +395,7 @@ void Painter::rotate_model()
 	rotatMatrix.rotate(angle, RotateAsix);
 
 	std::ofstream log("out.log", std::ios::app);
+
 	
 
 	eye = rotatMatrix * eye;
@@ -383,11 +408,25 @@ void Painter::rotate_model()
 	start_point = moved_point;
 
 	//log << angle << std::endl;
-	//log << eye.x() <<" "<< eye.y()<<" " << eye.z() << " " << std::endl;
-	//log << view.x() << " " << view.y() << " " << view.z() << " " << std::endl;
-	//log << up.x() << " " << up.y() << " " << up.z() << " " << std::endl;
+	isnot_rotated = false;
+
 	//
 }
+
+void Painter::move_model()
+{
+	QPointF vec = moved_point - start_point; 
+	view_left -= vec.x() * move_speed;
+	view_right -= vec.x() * move_speed;
+	view_up += vec.y() * move_speed;
+	view_bottom += vec.y() * move_speed;
+
+
+	start_point = moved_point;
+
+}
+
+
 
 //QMatrix4x4 Painter::get_rotate_matrix(double angle, QVector3D vector)
 //{
@@ -410,4 +449,129 @@ void Painter::rotate_model()
 void Painter::set_rotate_speed(unsigned int s)
 {
 	rotate_speed = s / 100.0;
+}
+
+void Painter::zoomin(QWheelEvent*e)
+{
+	if (isnot_rotated)
+	{
+		QPointF mousep = e->posF();
+		float w = this->width();
+		float h = this->height();
+		mousep.setX(mousep.x() - w / 2.0);
+		mousep.setY(-mousep.y() + h / 2.0);
+
+		mousep.setY(mousep.y() / (h / 2.0 / log_max));
+		mousep.setX(mousep.x() / (w / 2.0 / log_max));
+
+
+		QPointF move_vec(mousep);
+
+
+		for (auto &v : path)
+		{
+			for (auto &p : v)
+			{
+
+				switch (view_log)
+				{
+				case TOP_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setY(p.y() - move_vec.y() / 20.0);
+					log_model_vec.setX(log_model_vec.x()+move_vec.x());
+					log_model_vec.setY(log_model_vec.y() + move_vec.y());
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+
+
+	}
+	view_left *= 0.95;
+	view_right *= 0.95;
+	view_up *= 0.95;
+	view_bottom *= 0.95;
+
+	log_max *= 0.95;
+}
+
+void Painter::zoomout(QWheelEvent*e)
+{
+	if (isnot_rotated)
+	{
+		QPointF mousep = e->posF();
+		float w = this->width();
+		float h = this->height();
+		mousep.setX(mousep.x() - w / 2.0);
+		mousep.setY(-mousep.y() + h / 2.0);
+
+		mousep.setY(mousep.y() / (h / 2.0 / log_max));
+		mousep.setX(mousep.x() / (w / 2.0 / log_max));
+
+
+		QPointF move_vec(mousep);
+
+
+		for (auto &v : path)
+		{
+			for (auto &p : v)
+			{
+				switch (view_log)
+				{
+				case TOP_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setY(p.y() + move_vec.y() / 20.0);
+					break;
+				default:
+					break;
+				}
+
+
+
+
+			}
+		}
+		for (auto &v : points)
+		{
+			for (auto &p : v)
+			{
+				switch (view_log)
+				{
+				case TOP_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setY(p.y() + move_vec.y() / 20.0);
+					break;
+				default:
+					break;
+				}
+				
+
+			}
+		}
+	}
+
+	view_left /= 0.95;
+	view_right /= 0.95;
+	view_up /= 0.95;
+	view_bottom /= 0.95;
+
+	log_max /= 0.95;
+}
+
+void Painter::reset_date()
+{
+	eye.setX(0); eye.setY(0); eye.setZ(1);
+	up.setX(0); up.setY(1); up.setZ(0);
+	view.setX(0); view.setY(0); view.setZ(0);
+	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
+	aux_z = eye - view;
+	aux_x = QVector3D::crossProduct(aux_y, aux_z);
+	view_left = -100;
+	view_right = 100;
+	view_bottom = -100;
+	view_up = 100;
+	
 }
