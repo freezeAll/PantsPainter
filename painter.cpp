@@ -1,5 +1,5 @@
 ﻿#include "painter.hpp"
-
+#define CN(s) QString::fromLocal8Bit(s)
 Painter::Painter(QWidget * parent) : QOpenGLWidget(parent) 
 {
 	refresh = new QTimer(parent);
@@ -11,28 +11,7 @@ Painter::Painter(QWidget * parent) : QOpenGLWidget(parent)
 	backgroud_color.setBlueF(0.168);
 	backgroud_color.setAlphaF(0.0);
 
-	view_left = -100;
-	view_right = 100;
-	view_bottom = -100;
-	view_up = 100;
-
-	axis_length = 10.0;
-
-	rotate_speed = 0.6;
-	move_speed = 0.3;
-
-	isnot_rotated = true;
-
-	view_log = TOP_VIEW;
-
-	log_max = 100.0;
-
-	eye.setX(0); eye.setY(0); eye.setZ(1);
-	up.setX(0); up.setY(1); up.setZ(0);
-	view.setX(0); view.setY(0); view.setZ(0);
-	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
-	aux_z = eye - view;
-	aux_x = QVector3D::crossProduct(aux_y,aux_z);
+	reset_date();
 
 	
 
@@ -50,6 +29,106 @@ void Painter::refresh_gl()
 	this->update();
 	refresh->start(refresh_time);
 
+}
+
+void Painter::set_axis_display()
+{
+	if (axis_display)
+		axis_display = false;
+	else axis_display = true;
+}
+
+void Painter::top_view()
+{
+	eye.setX(0); eye.setY(0); eye.setZ(1);
+	up.setX(0); up.setY(1); up.setZ(0);
+	view_log = TOP_VIEW;
+	path = backup_path;
+	points = backup_points;
+	isnot_rotated = true;
+	reset_axis();
+}
+
+void Painter::upward_view()
+{
+	eye.setX(0); eye.setY(0); eye.setZ(-1);
+	up.setX(0); up.setY(-1); up.setZ(0);
+	view_log = UPWARD_VIEW;
+	path = backup_path;
+	points = backup_points;
+	isnot_rotated = true;
+	reset_axis();
+}
+
+void Painter::fornt_view()
+{
+	
+	eye.setX(0); eye.setY(-1); eye.setZ(0);
+	up.setX(0); up.setY(0); up.setZ(1);
+	view_log = FORNT_VIEW;
+	path = backup_path;
+	points = backup_points;
+	isnot_rotated = true;
+	reset_axis();
+	
+}
+
+void Painter::behind_view()
+{
+	eye.setX(0); eye.setY(1); eye.setZ(0);
+	up.setX(0); up.setY(0); up.setZ(1);
+	view_log = BEHIND_VIEW;
+	path = backup_path;
+	points = backup_points;
+	isnot_rotated = true;
+	reset_axis();
+}
+
+void Painter::left_view()
+{
+	eye.setX(-1); eye.setY(0); eye.setZ(0);
+	up.setX(0); up.setY(0); up.setZ(1);
+	view_log = LEFT_VIEW;
+	path = backup_path;
+	points = backup_points;
+	isnot_rotated = true;
+	reset_axis();
+}
+
+void Painter::right_view()
+{
+	eye.setX(1); eye.setY(0); eye.setZ(0);
+	up.setX(0); up.setY(0); up.setZ(1);
+	view_log = RIGHT_VIEW;
+	path = backup_path;
+	points = backup_points;
+	isnot_rotated = true;
+	reset_axis();
+}
+
+void Painter::path2points()
+{
+	if (path.empty()) return;
+	points = path;
+	backup_points = path;
+	points_property = path_property;
+
+	path.clear();
+	backup_path.clear();
+	path_property.clear();
+}
+
+void Painter::points2path()
+{
+	if (points.empty()) return;
+
+	path = points;
+	backup_path = points;
+	path_property = points_property;
+
+	points.clear();
+	backup_points.clear();
+	points_property.clear();
 }
 
 void Painter::initializeGL()
@@ -99,26 +178,27 @@ void Painter::draw_model()
 	glNewList(list_model, GL_COMPILE);
 	/*红色轴是X轴，绿色是Y轴，蓝色是Z轴*/
 	
+	if (axis_display)
+	{
+		glLineWidth(5);
+		glBegin(GL_LINES);
+		glColor3d(1.0, 0.0, 0.0);
+		glVertex3d(axis_x[0].x(), axis_x[0].y(), axis_x[0].z());
+		glVertex3d(axis_x[1].x(), axis_x[1].y(), axis_x[1].z());
+		glEnd();
 
-	glLineWidth(5);
-	glBegin(GL_LINES);
-	glColor3d(1.0, 0.0, 0.0);
-	glVertex3d(axis_date[0].x(), 0.0, 0.0);
-	glVertex3d(axis_date[0].y(), 0.0, 0.0);
-	glEnd();
+		glBegin(GL_LINES);
+		glColor3d(0.0, 1.0, 0.0);
+		glVertex3d(axis_y[0].x(), axis_y[0].y(), axis_y[0].z());
+		glVertex3d(axis_y[1].x(), axis_y[1].y(), axis_y[1].z());
+		glEnd();
 
-	glBegin(GL_LINES);
-	glColor3d(0.0, 1.0, 0.0);
-	glVertex3d(0.0, axis_date[1].x(), 0.0);
-	glVertex3d(0.0, axis_date[1].y(), 0.0);
-	glEnd();
-
-	glBegin(GL_LINES);
-	glColor3d(0.0, 0.0, 1.0);
-	glVertex3d(0.0, 0.0, axis_date[2].x());
-	glVertex3d(0.0, 0.0, axis_date[2].y());
-	glEnd();
-
+		glBegin(GL_LINES);
+		glColor3d(0.0, 0.0, 1.0);
+		glVertex3d(axis_z[0].x(), axis_z[0].y(), axis_z[0].z());
+		glVertex3d(axis_z[1].x(), axis_z[1].y(), axis_z[1].z());
+		glEnd();
+	}
 	if (!path.isEmpty())
 	{
 		for (int i = 0; i < path.size(); i++)
@@ -185,6 +265,7 @@ void Painter::add_path(QVector<QVector3D> p,double w,QColor c)
 {
 	path.push_back(p);
 	path_property.push_back(std::pair<double, QColor>(w, c));
+	backup_path = path;
 }
 
 
@@ -205,6 +286,7 @@ void Painter::add_points(QVector<QVector3D> p, double s, QColor c)
 {
 	points.push_back(p);
 	points_property.push_back(std::pair<double, QColor>(s, c));
+	backup_points = points;
 }
 
 
@@ -272,12 +354,14 @@ bool Painter::erase_path(int k)
 	{
 		path.clear();
 		path_property.clear();
+		backup_path.clear();
 		return true;
 	}
 	else
 	{
 		path.erase(path.begin() + k);
 		path_property.erase(path_property.begin() + k);
+		backup_path.erase(backup_path.begin() + k);
 		return true;
 	}
 }
@@ -291,12 +375,14 @@ bool Painter::erase_points(int k)
 	{
 		points.clear();
 		points_property.clear();
+		points.clear();
 		return true;
 	}
 	else
 	{
 		points.erase(points.begin() + k);
 		points_property.erase(points_property.begin() + k);
+		backup_points.erase(points.begin() + k);
 		return true;
 	}
 }
@@ -467,27 +553,8 @@ void Painter::zoomin(QWheelEvent*e)
 
 		QPointF move_vec(mousep);
 
-
-		for (auto &v : path)
-		{
-			for (auto &p : v)
-			{
-
-				switch (view_log)
-				{
-				case TOP_VIEW:
-					p.setX(p.x() - move_vec.x() / 20.0);
-					p.setY(p.y() - move_vec.y() / 20.0);
-					log_model_vec.setX(log_model_vec.x()+move_vec.x());
-					log_model_vec.setY(log_model_vec.y() + move_vec.y());
-					break;
-				default:
-					break;
-				}
-
-			}
-		}
-
+		mouse_move(ZOOMIN, move_vec);
+		axis_move(ZOOMIN, move_vec);
 
 	}
 	view_left *= 0.95;
@@ -496,6 +563,8 @@ void Painter::zoomin(QWheelEvent*e)
 	view_bottom *= 0.95;
 
 	log_max *= 0.95;
+
+	move_speed *= 0.95;
 }
 
 void Painter::zoomout(QWheelEvent*e)
@@ -514,23 +583,144 @@ void Painter::zoomout(QWheelEvent*e)
 
 		QPointF move_vec(mousep);
 
+		mouse_move(ZOOMOUT, move_vec);
+		axis_move(ZOOMOUT, move_vec);
 
+	}
+
+
+	view_left /= 0.95;
+	view_right /= 0.95;
+	view_up /= 0.95;
+	view_bottom /= 0.95;
+
+	log_max /= 0.95;
+	move_speed /= 0.95;
+}
+
+void Painter::reset_date()
+{
+	view_left = -100;
+	view_right = 100;
+	view_bottom = -100;
+	view_up = 100;
+
+	axis_length = 10.0;
+
+	rotate_speed = 0.6;
+	move_speed = 0.3;
+
+	view_log = TOP_VIEW;
+
+	log_max = 100.0;
+
+	eye.setX(0); eye.setY(0); eye.setZ(1);
+	up.setX(0); up.setY(1); up.setZ(0);
+	view.setX(0); view.setY(0); view.setZ(0);
+	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
+	aux_z = eye - view;
+	aux_x = QVector3D::crossProduct(aux_y, aux_z);
+
+	axis_display = true;
+
+	path = backup_path;
+	points = backup_points;
+	
+	isnot_rotated = true;
+	view_log = TOP_VIEW;
+
+	reset_axis();
+}
+
+void Painter::contextMenuEvent(QContextMenuEvent *e)
+{
+	menu = new QMenu(this);
+
+	QAction menu_axis(CN("显示坐标"),this);
+	menu_axis.setCheckable(true);
+	if (axis_display) menu_axis.setChecked(true);
+	else menu_axis.setChecked(false);
+	
+	QAction menu_reset(CN("重置位置"), this);
+	//views
+	QAction menu_fornt_view(CN("前视图"), this);
+
+	QAction menu_behind_view(CN("后视图"), this);
+
+	QAction menu_left_view(CN("左视图"), this);
+
+	QAction menu_right_view(CN("右视图"), this);
+
+	QAction menu_top_view(CN("俯视图"), this);
+
+	QAction menu_upward_view(CN("仰视图"), this);
+
+	QAction menu_points2path(CN("点连线"), this);
+
+	QAction menu_path2points(CN("取消点连线"), this);
+
+	menu->addAction(&menu_axis);
+	menu->addAction(&menu_reset);
+	menu->addAction(&menu_top_view);
+	menu->addAction(&menu_upward_view);
+	menu->addAction(&menu_fornt_view);
+	menu->addAction(&menu_behind_view);
+	menu->addAction(&menu_left_view);
+	menu->addAction(&menu_right_view);
+	menu->addAction(&menu_points2path);
+	menu->addAction(&menu_path2points);
+
+	connect(&menu_axis, SIGNAL(triggered()), this, SLOT(set_axis_display()));
+	connect(&menu_reset, SIGNAL(triggered()), this, SLOT(reset_date()));
+	connect(&menu_top_view, SIGNAL(triggered()), this, SLOT(top_view()));
+	connect(&menu_upward_view, SIGNAL(triggered()), this, SLOT(upward_view()));
+	connect(&menu_fornt_view, SIGNAL(triggered()), this, SLOT(fornt_view()));
+	connect(&menu_left_view, SIGNAL(triggered()), this, SLOT(left_view()));
+	connect(&menu_right_view, SIGNAL(triggered()), this, SLOT(right_view()));
+	connect(&menu_behind_view, SIGNAL(triggered()), this, SLOT(behind_view()));
+	connect(&menu_path2points, SIGNAL(triggered()), this, SLOT(path2points()));
+	connect(&menu_points2path, SIGNAL(triggered()), this, SLOT(points2path()));
+
+	menu->exec(QCursor::pos());
+}
+
+void Painter::mouse_move(MOVE_TYPE t,const QPointF &move_vec)
+{
+	if (t == ZOOMOUT)
+	{
 		for (auto &v : path)
 		{
 			for (auto &p : v)
 			{
 				switch (view_log)
 				{
-				case TOP_VIEW:
+				case Painter::TOP_VIEW:
 					p.setX(p.x() + move_vec.x() / 20.0);
 					p.setY(p.y() + move_vec.y() / 20.0);
+					break;
+				case Painter::UPWARD_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setY(p.y() - move_vec.y() / 20.0);
+					break;
+				case Painter::LEFT_VIEW:
+					p.setY(p.y() - move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
+					break;
+				case Painter::RIGHT_VIEW:
+					p.setY(p.y() + move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
+					break;
+				case Painter::FORNT_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
+					break;
+				case Painter::BEHIND_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
 					break;
 				default:
 					break;
 				}
-
-
-
 
 			}
 		}
@@ -540,38 +730,337 @@ void Painter::zoomout(QWheelEvent*e)
 			{
 				switch (view_log)
 				{
-				case TOP_VIEW:
+				case Painter::TOP_VIEW:
 					p.setX(p.x() + move_vec.x() / 20.0);
 					p.setY(p.y() + move_vec.y() / 20.0);
+					break;
+				case Painter::UPWARD_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setY(p.y() - move_vec.y() / 20.0);
+					break;
+				case Painter::LEFT_VIEW:
+					p.setY(p.y() - move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
+					break;
+				case Painter::RIGHT_VIEW:
+					p.setY(p.y() + move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
+					break;
+				case Painter::FORNT_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
+					break;
+				case Painter::BEHIND_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setZ(p.z() + move_vec.y() / 20.0);
 					break;
 				default:
 					break;
 				}
-				
 
 			}
 		}
+
 	}
+	else if (t == ZOOMIN)
+	{
 
-	view_left /= 0.95;
-	view_right /= 0.95;
-	view_up /= 0.95;
-	view_bottom /= 0.95;
 
-	log_max /= 0.95;
-}
+		for (auto &v : path)
+		{
+			for (auto &p : v)
+			{
 
-void Painter::reset_date()
-{
-	eye.setX(0); eye.setY(0); eye.setZ(1);
-	up.setX(0); up.setY(1); up.setZ(0);
-	view.setX(0); view.setY(0); view.setZ(0);
-	aux_y.setX(0); aux_y.setY(1); aux_y.setZ(0);
-	aux_z = eye - view;
-	aux_x = QVector3D::crossProduct(aux_y, aux_z);
-	view_left = -100;
-	view_right = 100;
-	view_bottom = -100;
-	view_up = 100;
+				switch (view_log)
+				{
+				case Painter::TOP_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setY(p.y() - move_vec.y() / 20.0);
+					break;
+				case Painter::UPWARD_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setY(p.y() + move_vec.y() / 20.0);
+					break;
+				case Painter::LEFT_VIEW:
+					p.setY(p.y() + move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				case Painter::RIGHT_VIEW:
+					p.setY(p.y() - move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				case Painter::FORNT_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				case Painter::BEHIND_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+
+		for (auto &v : points)
+		{
+			for (auto &p : v)
+			{
+
+				switch (view_log)
+				{
+				case Painter::TOP_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setY(p.y() - move_vec.y() / 20.0);
+					break;
+				case Painter::UPWARD_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setY(p.y() + move_vec.y() / 20.0);
+					break;
+				case Painter::LEFT_VIEW:
+					p.setY(p.y() + move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				case Painter::RIGHT_VIEW:
+					p.setY(p.y() - move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				case Painter::FORNT_VIEW:
+					p.setX(p.x() - move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				case Painter::BEHIND_VIEW:
+					p.setX(p.x() + move_vec.x() / 20.0);
+					p.setZ(p.z() - move_vec.y() / 20.0);
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+
+
+
+
+	}
 	
 }
+
+void Painter::axis_move(MOVE_TYPE t, const QPointF & move_vec)
+{
+	if (t == ZOOMOUT)
+	{
+		for (auto &p : axis_x)
+		{
+			switch (view_log)
+			{
+			case Painter::TOP_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setY(p.y() + move_vec.y() / 20.0);
+				break;
+			case Painter::UPWARD_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setY(p.y() - move_vec.y() / 20.0);
+				break;
+			case Painter::LEFT_VIEW:
+				p.setY(p.y() - move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::RIGHT_VIEW:
+				p.setY(p.y() + move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::FORNT_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::BEHIND_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			default:
+				break;
+			}
+		}
+		for (auto &p : axis_y)
+		{
+			switch (view_log)
+			{
+			case Painter::TOP_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setY(p.y() + move_vec.y() / 20.0);
+				break;
+			case Painter::UPWARD_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setY(p.y() - move_vec.y() / 20.0);
+				break;
+			case Painter::LEFT_VIEW:
+				p.setY(p.y() - move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::RIGHT_VIEW:
+				p.setY(p.y() + move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::FORNT_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::BEHIND_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			default:
+				break;
+			}
+		}
+		for (auto &p : axis_z)
+		{
+			switch (view_log)
+			{
+			case Painter::TOP_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setY(p.y() + move_vec.y() / 20.0);
+				break;
+			case Painter::UPWARD_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setY(p.y() - move_vec.y() / 20.0);
+				break;
+			case Painter::LEFT_VIEW:
+				p.setY(p.y() - move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::RIGHT_VIEW:
+				p.setY(p.y() + move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::FORNT_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			case Painter::BEHIND_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setZ(p.z() + move_vec.y() / 20.0);
+				break;
+			default:
+				break;
+			}
+		}
+
+	}
+	else if (t == ZOOMIN)
+	{
+		for (auto &p : axis_x)
+		{
+			switch (view_log)
+			{
+			case Painter::TOP_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setY(p.y() - move_vec.y() / 20.0);
+				break;
+			case Painter::UPWARD_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setY(p.y() + move_vec.y() / 20.0);
+				break;
+			case Painter::LEFT_VIEW:
+				p.setY(p.y() + move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::RIGHT_VIEW:
+				p.setY(p.y() - move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::FORNT_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::BEHIND_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			default:
+				break;
+			}
+		}
+		for (auto &p : axis_y)
+		{
+			switch (view_log)
+			{
+			case Painter::TOP_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setY(p.y() - move_vec.y() / 20.0);
+				break;
+			case Painter::UPWARD_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setY(p.y() + move_vec.y() / 20.0);
+				break;
+			case Painter::LEFT_VIEW:
+				p.setY(p.y() + move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::RIGHT_VIEW:
+				p.setY(p.y() - move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::FORNT_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::BEHIND_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			default:
+				break;
+			}
+		}
+		for (auto &p : axis_z)
+		{
+			switch (view_log)
+			{
+			case Painter::TOP_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setY(p.y() - move_vec.y() / 20.0);
+				break;
+			case Painter::UPWARD_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setY(p.y() + move_vec.y() / 20.0);
+				break;
+			case Painter::LEFT_VIEW:
+				p.setY(p.y() + move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::RIGHT_VIEW:
+				p.setY(p.y() - move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::FORNT_VIEW:
+				p.setX(p.x() - move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			case Painter::BEHIND_VIEW:
+				p.setX(p.x() + move_vec.x() / 20.0);
+				p.setZ(p.z() - move_vec.y() / 20.0);
+				break;
+			default:
+				break;
+			}
+		}
+
+
+
+
+
+	}
+}
+
+void Painter::reset_axis()
+{
+	axis_x = { QVector3D(0.0,0.0,0.0) , QVector3D(axis_length,0.0,0.0) };
+	axis_y = { QVector3D(0.0,0.0,0.0) ,QVector3D(0.0, -axis_length,0.0) };
+	axis_z = { QVector3D(0.0,0.0,0.0) ,QVector3D(0.0,0.0,axis_length) };
+}
+
