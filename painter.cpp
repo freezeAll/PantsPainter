@@ -360,7 +360,7 @@ bool Painter::erase_path(int k)
 	}
 	else
 	{
-		path.erase(path.begin() + k);
+		path.erase(path.begin() + k );
 		path_property.erase(path_property.begin() + k);
 		backup_path.erase(backup_path.begin() + k);
 		return true;
@@ -383,7 +383,7 @@ bool Painter::erase_points(int k)
 	{
 		points.erase(points.begin() + k);
 		points_property.erase(points_property.begin() + k);
-		backup_points.erase(points.begin() + k);
+		backup_points.erase(backup_points.begin() + k);
 		return true;
 	}
 }

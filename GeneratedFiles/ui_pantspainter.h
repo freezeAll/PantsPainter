@@ -241,6 +241,7 @@ public:
 
         doubleSpinBox_2 = new QDoubleSpinBox(horizontalLayoutWidget_2);
         doubleSpinBox_2->setObjectName(QStringLiteral("doubleSpinBox_2"));
+        doubleSpinBox_2->setValue(1);
 
         horizontalLayout_2->addWidget(doubleSpinBox_2);
 
@@ -252,6 +253,7 @@ public:
         spinBox_4 = new QSpinBox(horizontalLayoutWidget_2);
         spinBox_4->setObjectName(QStringLiteral("spinBox_4"));
         spinBox_4->setMaximum(255);
+        spinBox_4->setValue(255);
 
         horizontalLayout_2->addWidget(spinBox_4);
 
@@ -263,6 +265,7 @@ public:
         spinBox_5 = new QSpinBox(horizontalLayoutWidget_2);
         spinBox_5->setObjectName(QStringLiteral("spinBox_5"));
         spinBox_5->setMaximum(255);
+        spinBox_5->setValue(255);
 
         horizontalLayout_2->addWidget(spinBox_5);
 
@@ -274,6 +277,7 @@ public:
         spinBox_6 = new QSpinBox(horizontalLayoutWidget_2);
         spinBox_6->setObjectName(QStringLiteral("spinBox_6"));
         spinBox_6->setMaximum(255);
+        spinBox_6->setValue(255);
 
         horizontalLayout_2->addWidget(spinBox_6);
 

@@ -44,7 +44,7 @@ PantsPainter::PantsPainter(QWidget *parent)
 	connect(ui.pushButton_11, SIGNAL(clicked()), this, SLOT(set_background_color()));
 
 	connect(ui.pushButton_3, SIGNAL(clicked()), this, SLOT(selcted_file()));
-	connect(ui.comboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(read_selectd_model_proprety()));
+	connect(ui.comboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(read_selectd_model_proprety(int)));
 	connect(ui.pushButton_7, SIGNAL(clicked()), this, SLOT(select_color_file_mode()));
 	connect(ui.pushButton_8, SIGNAL(clicked()), this, SLOT(set_model_proprety_file_mode()));
 	connect(ui.pushButton_10, SIGNAL(clicked()), this, SLOT(clear_all_model()));
@@ -73,7 +73,7 @@ void PantsPainter::change_mode()
 		ui.groupBox_2->setEnabled(true);
 		ui.openGLWidget->erase_path(-1);
 		ui.openGLWidget->erase_points(-1);
-
+		ui.comboBox_2->clear();
 	}
 }
 
@@ -307,6 +307,7 @@ void PantsPainter::set_filename()
 void PantsPainter::selcted_file()
 {
 	QString fn = QFileDialog::getOpenFileName(this, CN("打开文件"), "./", CN("制表符分隔，逗号分隔(*.txt *.csv)"));
+	if (fn.isEmpty()) return;
 	QVector<QVector3D> addv;
 	if (fn[fn.size() - 1] == 't')
 	{
@@ -336,12 +337,12 @@ void PantsPainter::selcted_file()
 	if (ui.comboBox_3->currentIndex() == 0)
 	{
 		ui.openGLWidget->add_points(addv, ui.doubleSpinBox_2->value(), QColor(ui.spinBox_4->value(), ui.spinBox_5->value(), ui.spinBox_6->value()));
-		ui.comboBox_2->addItem("点" + INT(ui.openGLWidget->get_points_size() - 1),QVariant(QPoint(PantsPainter::POINTS, ui.openGLWidget->get_points_size() - 1)));
+		ui.comboBox_2->addItem(CN("点") + INT(ui.openGLWidget->get_points_size() - 1),QVariant(QPoint(PantsPainter::POINTS, ui.openGLWidget->get_points_size() - 1)));
 	}
 	else
 	{
 		ui.openGLWidget->add_path(addv, ui.doubleSpinBox_2->value(), QColor(ui.spinBox_4->value(), ui.spinBox_5->value(), ui.spinBox_6->value()));
-		ui.comboBox_2->addItem("线" + INT(ui.openGLWidget->get_path_size() - 1), QVariant(QPoint(PantsPainter::PATH, ui.openGLWidget->get_path_size() - 1)));
+		ui.comboBox_2->addItem(CN("线") + INT(ui.openGLWidget->get_path_size() - 1), QVariant(QPoint(PantsPainter::PATH, ui.openGLWidget->get_path_size() - 1)));
 
 	}
 	read_selectd_model_proprety(ui.comboBox_2->currentIndex());
@@ -349,7 +350,7 @@ void PantsPainter::selcted_file()
 
 void PantsPainter::read_selectd_model_proprety(int)
 {
-	if (ui.comboBox_2->count == 0) return;
+	if (ui.comboBox_2->count() == 0) return;
 	auto data = ui.comboBox_2->currentData().toPoint();
 	
 	if (data.x() == PATH)
@@ -357,7 +358,7 @@ void PantsPainter::read_selectd_model_proprety(int)
 		double s;
 		QColor color;
 		ui.openGLWidget->get_path_property(data.y(),s,color);
-		ui.doubleSpinBox->setValue(s);
+		ui.doubleSpinBox_2->setValue(s);
 		ui.spinBox_4->setValue(color.red());
 		ui.spinBox_5->setValue(color.green());
 		ui.spinBox_6->setValue(color.blue());
@@ -368,7 +369,7 @@ void PantsPainter::read_selectd_model_proprety(int)
 		double s;
 		QColor color;
 		ui.openGLWidget->get_points_property(data.y(), s, color);
-		ui.doubleSpinBox->setValue(s);
+		ui.doubleSpinBox_2->setValue(s);
 		ui.spinBox_4->setValue(color.red());
 		ui.spinBox_5->setValue(color.green());
 		ui.spinBox_6->setValue(color.blue());
@@ -391,7 +392,7 @@ void PantsPainter::select_color_file_mode()
 
 void PantsPainter::set_model_proprety_file_mode()
 {
-	if (ui.comboBox_2->count == 0) return;
+	if (ui.comboBox_2->count() == 0) return;
 	auto data = ui.comboBox_2->currentData().toPoint();
 	switch (data.x())
 	{
@@ -442,10 +443,11 @@ void PantsPainter::clear_selected_model()
 		{
 			if (ui.comboBox_2->itemData(i).toPoint().x() == POINTS)
 			{
-				if(ui.comboBox_2->itemData(i).toPoint().y() > i )
+				if(ui.comboBox_2->itemData(i).toPoint().y() > data.y() )
 				ui.comboBox_2->setItemData(i, QVariant(QPoint(POINTS, ui.comboBox_2->itemData(i).toPoint().y() - 1)));
 			}
 		}
+		
 		break;
 	case PATH:
 		ui.openGLWidget->erase_path(data.y());
@@ -453,14 +455,17 @@ void PantsPainter::clear_selected_model()
 		{
 			if (ui.comboBox_2->itemData(i).toPoint().x() ==PATH)
 			{
-				if (ui.comboBox_2->itemData(i).toPoint().y() > i)
+				if (ui.comboBox_2->itemData(i).toPoint().y() > data.y())
 					ui.comboBox_2->setItemData(i, QVariant(QPoint(POINTS, ui.comboBox_2->itemData(i).toPoint().y() - 1)));
 			}
 		}
+		
 		break;
 	default:
 		break;
 	}
+	ui.comboBox_2->removeItem(ui.comboBox_2->currentIndex());
+
 }
 
 void PantsPainter::autoget_filename()
