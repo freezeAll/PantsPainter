@@ -228,8 +228,9 @@ void Painter::draw_model()
 		for (int i = 0; i < points.size(); i++)
 		{
 
-			glBegin(GL_POINTS);
 			glPointSize(points_property[i].first);
+			glBegin(GL_POINTS);
+			
 			glColor3d(points_property[i].second.redF(),
 				points_property[i].second.greenF(), points_property[i].second.blueF());
 			for (int k = 0; k < points[i].size(); k++)
@@ -480,7 +481,7 @@ void Painter::rotate_model()
 	QMatrix4x4 rotatMatrix;
 	rotatMatrix.rotate(angle, RotateAsix);
 
-	std::ofstream log("out.log", std::ios::app);
+	
 
 	
 
@@ -493,7 +494,7 @@ void Painter::rotate_model()
 	aux_x.normalize();
 	start_point = moved_point;
 
-	//log << angle << std::endl;
+	
 	isnot_rotated = false;
 
 	//
@@ -598,6 +599,11 @@ void Painter::zoomout(QWheelEvent*e)
 	move_speed /= 0.95;
 }
 
+int Painter::get_rotate_speed()
+{
+	return (rotate_speed * 100);
+}
+
 void Painter::reset_date()
 {
 	view_left = -100;
@@ -682,6 +688,26 @@ void Painter::contextMenuEvent(QContextMenuEvent *e)
 	connect(&menu_points2path, SIGNAL(triggered()), this, SLOT(points2path()));
 
 	menu->exec(QCursor::pos());
+}
+
+bool Painter::path_is_empty()
+{
+	return path.isEmpty();
+}
+
+bool Painter::points_is_empty()
+{
+	return points.isEmpty();
+}
+
+int Painter::get_path_size()
+{
+	return path.size();
+}
+
+int Painter::get_points_size()
+{
+	return points.size();
 }
 
 void Painter::mouse_move(MOVE_TYPE t,const QPointF &move_vec)
@@ -1063,4 +1089,5 @@ void Painter::reset_axis()
 	axis_y = { QVector3D(0.0,0.0,0.0) ,QVector3D(0.0, -axis_length,0.0) };
 	axis_z = { QVector3D(0.0,0.0,0.0) ,QVector3D(0.0,0.0,axis_length) };
 }
+
 
