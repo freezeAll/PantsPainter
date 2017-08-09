@@ -40,95 +40,95 @@ void Painter::set_axis_display()
 
 void Painter::top_view()
 {
+	reset_date();
 	eye.setX(0); eye.setY(0); eye.setZ(1);
 	up.setX(0); up.setY(1); up.setZ(0);
 	view_log = TOP_VIEW;
-	path = backup_path;
-	points = backup_points;
-	isnot_rotated = true;
-	reset_axis();
+
+
 }
 
 void Painter::upward_view()
 {
+	reset_date();
 	eye.setX(0); eye.setY(0); eye.setZ(-1);
 	up.setX(0); up.setY(-1); up.setZ(0);
 	view_log = UPWARD_VIEW;
-	path = backup_path;
-	points = backup_points;
-	isnot_rotated = true;
-	reset_axis();
+
+
 }
 
 void Painter::fornt_view()
 {
-	
+	reset_date();
+
 	eye.setX(0); eye.setY(-1); eye.setZ(0);
 	up.setX(0); up.setY(0); up.setZ(1);
 	view_log = FORNT_VIEW;
-	path = backup_path;
-	points = backup_points;
-	isnot_rotated = true;
-	reset_axis();
+
+
 	
 }
 
 void Painter::behind_view()
 {
+	reset_date();
+
 	eye.setX(0); eye.setY(1); eye.setZ(0);
 	up.setX(0); up.setY(0); up.setZ(1);
 	view_log = BEHIND_VIEW;
-	path = backup_path;
-	points = backup_points;
-	isnot_rotated = true;
-	reset_axis();
+
 }
 
 void Painter::left_view()
 {
+	reset_date();
+
 	eye.setX(-1); eye.setY(0); eye.setZ(0);
 	up.setX(0); up.setY(0); up.setZ(1);
 	view_log = LEFT_VIEW;
-	path = backup_path;
-	points = backup_points;
-	isnot_rotated = true;
-	reset_axis();
+
+
 }
 
 void Painter::right_view()
 {
+	reset_date();
+
 	eye.setX(1); eye.setY(0); eye.setZ(0);
 	up.setX(0); up.setY(0); up.setZ(1);
 	view_log = RIGHT_VIEW;
-	path = backup_path;
-	points = backup_points;
-	isnot_rotated = true;
-	reset_axis();
+
+
 }
 
 void Painter::path2points()
 {
 	if (path.empty()) return;
-	points = path;
-	backup_points = path;
-	points_property = path_property;
+	for (auto a : path) points.push_back(a);
+	for (auto a : backup_path) backup_points.push_back(a);
+	for (auto a : path_property) points_property.push_back(a);
 
 	path.clear();
 	backup_path.clear();
 	path_property.clear();
+
+	emit points2path(false);
 }
 
 void Painter::points2path()
 {
 	if (points.empty()) return;
 
-	path = points;
-	backup_path = points;
-	path_property = points_property;
+	for (auto a : points) path.push_back(a);
+	for (auto a : backup_points) backup_path.push_back(a);
+	for (auto a : points_property) path_property.push_back(a);
 
 	points.clear();
 	backup_points.clear();
 	points_property.clear();
+
+	emit points2path(true);
 }
 
 void Painter::initializeGL()
@@ -629,13 +629,17 @@ void Painter::reset_date()
 
 	axis_display = true;
 
-	path = backup_path;
-	points = backup_points;
+
 	
 	isnot_rotated = true;
 	view_log = TOP_VIEW;
 
 	reset_axis();
+
+	if (!backup_path.isEmpty()) path = backup_path;
+	if (!backup_points.isEmpty()) points = backup_points;
+	
+	
 }
 
 void Painter::contextMenuEvent(QContextMenuEvent *e)

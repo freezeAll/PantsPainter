@@ -72,7 +72,8 @@ protected:
 
 	void                               contextMenuEvent(QContextMenuEvent *e);
 
-
+signals:
+	void points2path(bool);
 private:
 	enum VIEW
 	{

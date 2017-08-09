@@ -36,6 +36,9 @@ void set_model_proprety_file_mode();
 void clear_all_model();
 void set_background_color();
 void clear_selected_model();
+void turn_off_button(bool);
+void turn_on_button();
+
 private:
 	Ui::PantsPainterClass ui;
 	QDir *selected_dir;

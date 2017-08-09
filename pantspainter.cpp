@@ -49,6 +49,8 @@ PantsPainter::PantsPainter(QWidget *parent)
 	connect(ui.pushButton_8, SIGNAL(clicked()), this, SLOT(set_model_proprety_file_mode()));
 	connect(ui.pushButton_10, SIGNAL(clicked()), this, SLOT(clear_all_model()));
 	connect(ui.pushButton_9, SIGNAL(clicked()), this, SLOT(clear_selected_model()));
+
+	connect(ui.openGLWidget, SIGNAL(points2path(bool)), this, SLOT(turn_off_button(bool)));
 	emit index_changed(index);
 }
 
@@ -74,6 +76,7 @@ void PantsPainter::change_mode()
 		ui.openGLWidget->erase_path(-1);
 		ui.openGLWidget->erase_points(-1);
 		ui.comboBox_2->clear();
+		turn_on_button();
 	}
 }
 
@@ -300,7 +303,7 @@ void PantsPainter::set_filename()
 	delete first_filename;
 	delete second_filename;
 	first_filename = new QString(ui.lineEdit->text().toLocal8Bit());
-	first_filename = new QString(ui.lineEdit_2->text().toLocal8Bit());
+	second_filename = new QString(ui.lineEdit_2->text().toLocal8Bit());
 	emit index_changed(index);
 }
 
@@ -417,6 +420,7 @@ void PantsPainter::clear_all_model()
 	ui.spinBox_5->setValue(255);
 	ui.spinBox_6->setValue(255);
 	ui.doubleSpinBox_2->setValue(1.0);
+	turn_on_button();
 }
 
 void PantsPainter::set_background_color()
@@ -466,6 +470,27 @@ void PantsPainter::clear_selected_model()
 	}
 	ui.comboBox_2->removeItem(ui.comboBox_2->currentIndex());
 
+}
+
+void PantsPainter::turn_off_button(bool m)
+{
+	if (m)
+	{
+		ui.pushButton_8->setEnabled(false);
+		ui.pushButton_9->setEnabled(false);
+	}
+	else if (!m)
+	{
+		ui.pushButton_8->setEnabled(false);
+		ui.pushButton_9->setEnabled(false);
+	}
+}
+
+void PantsPainter::turn_on_button()
+{
+	if(!ui.pushButton_8->isEnabled()) ui.pushButton_8->setEnabled(true);
+	
+	if (!ui.pushButton_9->isEnabled()) ui.pushButton_9->setEnabled(true);
 }
 
 void PantsPainter::autoget_filename()

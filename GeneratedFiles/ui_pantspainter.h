@@ -98,15 +98,15 @@ public:
     {
         if (PantsPainterClass->objectName().isEmpty())
             PantsPainterClass->setObjectName(QStringLiteral("PantsPainterClass"));
-        PantsPainterClass->resize(850, 786);
+        PantsPainterClass->resize(1060, 786);
         centralWidget = new QWidget(PantsPainterClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         openGLWidget = new Painter(centralWidget);
         openGLWidget->setObjectName(QStringLiteral("openGLWidget"));
-        openGLWidget->setGeometry(QRect(0, 10, 851, 400));
+        openGLWidget->setGeometry(QRect(0, 10, 1061, 400));
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(10, 420, 831, 151));
+        groupBox->setGeometry(QRect(10, 420, 1041, 151));
         pushButton = new QPushButton(groupBox);
         pushButton->setObjectName(QStringLiteral("pushButton"));
         pushButton->setGeometry(QRect(10, 20, 75, 23));
@@ -174,7 +174,7 @@ public:
 
         pushButton_2 = new QPushButton(groupBox);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
-        pushButton_2->setGeometry(QRect(750, 110, 75, 23));
+        pushButton_2->setGeometry(QRect(960, 110, 75, 23));
         label_5 = new QLabel(groupBox);
         label_5->setObjectName(QStringLiteral("label_5"));
         label_5->setGeometry(QRect(100, 20, 54, 21));
@@ -216,7 +216,7 @@ public:
         checkBox->setGeometry(QRect(10, 590, 71, 21));
         groupBox_2 = new QGroupBox(centralWidget);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(10, 630, 831, 81));
+        groupBox_2->setGeometry(QRect(10, 630, 1041, 81));
         pushButton_3 = new QPushButton(groupBox_2);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
         pushButton_3->setGeometry(QRect(10, 10, 75, 23));
@@ -288,13 +288,13 @@ public:
 
         pushButton_8 = new QPushButton(groupBox_2);
         pushButton_8->setObjectName(QStringLiteral("pushButton_8"));
-        pushButton_8->setGeometry(QRect(750, 40, 75, 23));
+        pushButton_8->setGeometry(QRect(960, 40, 75, 23));
         pushButton_9 = new QPushButton(groupBox_2);
         pushButton_9->setObjectName(QStringLiteral("pushButton_9"));
-        pushButton_9->setGeometry(QRect(640, 10, 91, 23));
+        pushButton_9->setGeometry(QRect(850, 10, 91, 23));
         pushButton_10 = new QPushButton(groupBox_2);
         pushButton_10->setObjectName(QStringLiteral("pushButton_10"));
-        pushButton_10->setGeometry(QRect(740, 10, 81, 23));
+        pushButton_10->setGeometry(QRect(950, 10, 81, 23));
         label_17 = new QLabel(groupBox_2);
         label_17->setObjectName(QStringLiteral("label_17"));
         label_17->setGeometry(QRect(100, 10, 54, 21));
@@ -313,7 +313,7 @@ public:
         PantsPainterClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PantsPainterClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 850, 23));
+        menuBar->setGeometry(QRect(0, 0, 1060, 23));
         PantsPainterClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(PantsPainterClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
