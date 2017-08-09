@@ -302,6 +302,16 @@ void PantsPainter::set_filename()
 {
 	delete first_filename;
 	delete second_filename;
+
+	if (ui.lineEdit->text()[ui.lineEdit->text().size() - 1] != '-')
+	{
+		ui.lineEdit->setText(ui.lineEdit->text() + '-');
+	}
+	if (ui.lineEdit_2->text()[ui.lineEdit_2->text().size() - 1] != '-')
+	{
+		ui.lineEdit_2->setText(ui.lineEdit_2->text() + '-');
+	}
+
 	first_filename = new QString(ui.lineEdit->text().toLocal8Bit());
 	second_filename = new QString(ui.lineEdit_2->text().toLocal8Bit());
 	emit index_changed(index);
@@ -495,56 +505,97 @@ void PantsPainter::turn_on_button()
 
 void PantsPainter::autoget_filename()
 {
-	QString tmpfirst;
-	QString tmpsecond;
-	QString first;
-	QString second;
+	QRegExp fnre("([^.]+-)(\\d+)(.txt)");
+	QRegExp goodre("([^.]+-)(\\d+)");
+	QStringList goodfn;
+	QStringList fn1;
+	QStringList fn2;
+	QString ofn1;
+	QString ofn2;
+	QVector<int> idx1;
+	QVector<int> idx2;
+	
 
-	int i = 0;
 	for (auto a : *file_list)
 	{
-		if (i == 2)
+		int i = fnre.indexIn(a.fileName());
+		if (i < 0) continue;
+		goodfn.push_back(fnre.cap(1) + fnre.cap(2));
+	}
+	for (auto a : goodfn)
+	{
+		int i = goodre.indexIn(a);
+		if (ofn1.isEmpty()) ofn1 = goodre.cap(1);
+		else
 		{
-			tmpfirst = a.fileName();
+			if (ofn1 != goodre.cap(1)) 
+			{
+				ofn2 = goodre.cap(1);
+				break;
+			}
 		}
-		if (i == (file_list->size() / 2 + 1))
-		{
-			tmpsecond = a.fileName();
-		}
-		i++;
+	}
+
+	if (goodfn.isEmpty() || ofn2.isEmpty()) 
+	{ 
+		QMessageBox::warning(this, CN("错误"), CN("无法自动识别文件名，请手动设置文件名。"), QMessageBox::Ok);
+		return;
+	}
+	if (fn1.size() != fn2.size())
+	{
+		QMessageBox::warning(this, CN("错误"), CN("对比文件数目不符合，请检查文件夹。"), QMessageBox::Ok);
+		return;
+	}
+
+
+
+	first_filename = new QString(ofn1.toLocal8Bit());
+	second_filename = new QString(ofn2.toLocal8Bit());
+	QString indexreg = ofn1 + "(\\d+)";
+	QRegExp findint1(indexreg);
+	ofn1.push_front('(');
+	ofn1.push_back(')');
+	for (auto a : goodfn)
+	{
+		
+		if(findint1.indexIn(a) >= 0)
+		fn1.push_back(findint1.cap(0));
+
 	}
 	
-	for (i = 0; i <= tmpfirst.size() - 6; i++)
+
+	
+
+
+	for (auto a : fn1)
 	{
-		first.push_back(tmpfirst[i]);
+		
+
+		if (findint1.indexIn(a) >= 0)
+		idx1.push_back(findint1.cap(1).toInt());
 	}
-	for (i = 0; i <= tmpsecond.size() - 6; i++)
-	{
-		second.push_back(tmpsecond[i]);
-	}
 
 
 
-	first_filename = new QString(first.toLocal8Bit());
-	second_filename = new QString(second.toLocal8Bit());
 
 
-	autoset_min_max_index();
+
+	autoset_min_max_index(idx1);
  }
 
-void PantsPainter::autoset_min_max_index()
+void PantsPainter::autoset_min_max_index(QVector<int> idx)
 {
-	QString first_num;
 
-	for (int i = first_filename->size(); file_list[0][2].fileName()[i] != '.'; i++)
+	int min = 0;
+	int max = 0;
+	for (int i = 0; i < idx.size(); i++)
 	{
-		first_num.push_back(file_list[0][2].fileName()[i]);
+		if (idx[i] < idx[min]) min = i;
+		if (idx[i] > idx[max]) max = i;
 	}
 
-
-	min_index = first_num.toInt();
-	max_index = min_index - 1 + (file_list->size() - 2) / 2;
-
+	min_index = idx[min];
+	max_index = idx[max];
 
 }
 

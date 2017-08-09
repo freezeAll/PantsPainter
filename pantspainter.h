@@ -7,6 +7,8 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QColorDialog>
+#include <QRegExp>
+#include <QMessageBox>
 class PantsPainter : public QMainWindow
 {
 	Q_OBJECT
@@ -48,7 +50,7 @@ private:
 	QString *second_filename;
 	void autoget_filename();
 
-	void autoset_min_max_index();
+	void autoset_min_max_index(QVector<int>);
 
 	enum MODEL_TYPE
 	{
