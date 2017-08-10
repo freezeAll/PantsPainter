@@ -376,7 +376,7 @@ bool Painter::erase_points(int k)
 	{
 		points.clear();
 		points_property.clear();
-		points.clear();
+		backup_points.clear();
 		return true;
 	}
 	else
@@ -472,6 +472,7 @@ void Painter::wheelEvent(QWheelEvent *e)
 
 void Painter::rotate_model()
 {
+	if (path.isEmpty() && points.isEmpty()) return;
 	QVector3D MouseTrace = aux_y * (start_point.y() - moved_point.y()) + aux_x * (moved_point.x() -start_point.x());
 	QVector3D RotateAsix = QVector3D::crossProduct(MouseTrace, aux_z);
 	RotateAsix.normalize();
@@ -502,6 +503,7 @@ void Painter::rotate_model()
 
 void Painter::move_model()
 {
+	if (path.isEmpty() && points.isEmpty()) return;
 	QPointF vec = moved_point - start_point; 
 	view_left -= vec.x() * move_speed;
 	view_right -= vec.x() * move_speed;
@@ -540,6 +542,7 @@ void Painter::set_rotate_speed(unsigned int s)
 
 void Painter::zoomin(QWheelEvent*e)
 {
+	if (path.isEmpty() && points.isEmpty()) return;
 	if (isnot_rotated)
 	{
 		QPointF mousep = e->posF();
@@ -570,6 +573,7 @@ void Painter::zoomin(QWheelEvent*e)
 
 void Painter::zoomout(QWheelEvent*e)
 {
+	if (path.isEmpty() && points.isEmpty()) return;
 	if (isnot_rotated)
 	{
 		QPointF mousep = e->posF();

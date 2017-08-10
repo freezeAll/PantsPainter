@@ -69,6 +69,7 @@ void PantsPainter::change_mode()
 		ui.groupBox_2->setEnabled(false);
 		ui.openGLWidget->erase_path(-1);
 		ui.openGLWidget->erase_points(-1);
+		ui.openGLWidget->reset_date();
 		emit index_changed(index);
 	}
 	else
@@ -78,6 +79,7 @@ void PantsPainter::change_mode()
 		ui.openGLWidget->erase_path(-1);
 		ui.openGLWidget->erase_points(-1);
 		ui.comboBox_2->clear();
+		ui.openGLWidget->reset_date();
 		turn_on_button();
 	}
 }
