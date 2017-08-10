@@ -48,7 +48,7 @@ private:
 	int index;
 	QString *first_filename;
 	QString *second_filename;
-	void autoget_filename();
+	unsigned short autoget_filename();
 
 	void autoset_min_max_index(QVector<int>);
 
@@ -57,9 +57,17 @@ private:
 		PATH = 0,
 		POINTS = 1
 	};
+	enum ERROR_TYPE
+	{
+		FILE_NOTFOUND = 0,
+		COUNT_NOT_TRUE = 1,
+		FOUNDED = 2
+	};
 
 	int min_index;
 	int max_index;
+
+	bool first_boot;
 };
 
 #endif // PANTSPAINTER_H

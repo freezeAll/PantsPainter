@@ -5,6 +5,7 @@ PantsPainter::PantsPainter(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	first_boot = true;
 	selected_dir = new QDir(CN("./modelfiles"));
 	file_list = new QFileInfoList(selected_dir->entryInfoList());
 	ui.groupBox_2->setEnabled(false);
@@ -52,6 +53,7 @@ PantsPainter::PantsPainter(QWidget *parent)
 
 	connect(ui.openGLWidget, SIGNAL(points2path(bool)), this, SLOT(turn_off_button(bool)));
 	emit index_changed(index);
+	first_boot = false;
 }
 
 PantsPainter::~PantsPainter()
@@ -163,17 +165,37 @@ void PantsPainter::open_folder()
 	if (dir.isEmpty()) return;
 	else
 	{
+		
 		delete selected_dir;
 		delete file_list;
-		delete first_filename;
-		delete second_filename;
 		selected_dir = new QDir(dir);
 		file_list = new QFileInfoList(selected_dir->entryInfoList());
-		autoget_filename();
-		ui.label_6->setText(selected_dir->path());
-		ui.label_7->setText(INT(index));
-		ui.lineEdit->setText(*first_filename);
-		ui.lineEdit_2->setText(*second_filename);
+		switch (autoget_filename())
+		{
+		case FILE_NOTFOUND:
+			set_filename();
+			ui.label_6->setText(selected_dir->path());
+			ui.label_7->setText(INT(index));
+			ui.lineEdit->setText(*first_filename);
+			ui.lineEdit_2->setText(*second_filename);
+			break;
+		case COUNT_NOT_TRUE:
+			ui.label_6->setText(selected_dir->path());
+			ui.label_7->setText(INT(index));
+			ui.lineEdit->setText(*first_filename);
+			ui.lineEdit_2->setText(*second_filename);
+			
+			break;
+		case FOUNDED:
+			ui.label_6->setText(selected_dir->path());
+			ui.label_7->setText(INT(index));
+			ui.lineEdit->setText(*first_filename);
+			ui.lineEdit_2->setText(*second_filename);
+			index = min_index;
+			emit index_changed(index);
+			break;
+		}
+		
 		//if (ui.radioButton->isChecked()) select_model1();
 		//else select_model2();
 		
@@ -302,7 +324,14 @@ void PantsPainter::set_filename()
 {
 	delete first_filename;
 	delete second_filename;
-
+	if (ui.lineEdit->text() == "")
+	{
+		ui.lineEdit->setText("-");
+	}	
+	if (ui.lineEdit_2->text() == "")
+	{
+		ui.lineEdit_2->setText("-");
+	}
 	if (ui.lineEdit->text()[ui.lineEdit->text().size() - 1] != '-')
 	{
 		ui.lineEdit->setText(ui.lineEdit->text() + '-');
@@ -314,6 +343,31 @@ void PantsPainter::set_filename()
 
 	first_filename = new QString(ui.lineEdit->text().toLocal8Bit());
 	second_filename = new QString(ui.lineEdit_2->text().toLocal8Bit());
+
+	QString fi1 = ui.lineEdit->text();
+	QString fi2 = ui.lineEdit_2->text();
+
+	fi1.push_front('(');
+	fi1.push_back(')');
+
+
+	QRegExp r1(fi1 + "(\\d+)");
+	QVector<int> idx;
+	for (auto a : *file_list)
+	{
+		r1.indexIn(a.fileName());
+		if (r1.cap(1) == ui.lineEdit->text())
+		{
+			idx.push_back(r1.cap(2).toInt());
+
+		}
+	}
+
+
+	autoset_min_max_index(idx);
+
+	index = min_index;
+
 	emit index_changed(index);
 }
 
@@ -503,7 +557,7 @@ void PantsPainter::turn_on_button()
 	if (!ui.pushButton_9->isEnabled()) ui.pushButton_9->setEnabled(true);
 }
 
-void PantsPainter::autoget_filename()
+unsigned short PantsPainter::autoget_filename()
 {
 	QRegExp fnre("([^.]+-)(\\d+)(.txt)");
 	QRegExp goodre("([^.]+-)(\\d+)");
@@ -538,23 +592,24 @@ void PantsPainter::autoget_filename()
 
 	if (goodfn.isEmpty() || ofn2.isEmpty()) 
 	{ 
-		QMessageBox::warning(this, CN("错误"), CN("无法自动识别文件名，请手动设置文件名。"), QMessageBox::Ok);
-		return;
-	}
-	if (fn1.size() != fn2.size())
-	{
-		QMessageBox::warning(this, CN("错误"), CN("对比文件数目不符合，请检查文件夹。"), QMessageBox::Ok);
-		return;
+		QMessageBox::warning(this, CN("错误"), CN("无法自动识别目录，请检查文件名格式。"), QMessageBox::Ok);
+		return FILE_NOTFOUND;
 	}
 
+	QString rfn1 = ofn1;
+	QString rfn2 = ofn2;
 
 
-	first_filename = new QString(ofn1.toLocal8Bit());
-	second_filename = new QString(ofn2.toLocal8Bit());
-	QString indexreg = ofn1 + "(\\d+)";
+
+	rfn1.push_front('(');
+	rfn1.push_back(')');
+	rfn2.push_front('(');
+	rfn2.push_back(')');
+	QString indexreg = rfn1 + "(\\d+)";
+	QString indexreg2 = rfn2 + "(\\d+)";
 	QRegExp findint1(indexreg);
-	ofn1.push_front('(');
-	ofn1.push_back(')');
+	QRegExp findint2(indexreg2);
+
 	for (auto a : goodfn)
 	{
 		
@@ -562,9 +617,28 @@ void PantsPainter::autoget_filename()
 		fn1.push_back(findint1.cap(0));
 
 	}
-	
+	for (auto a : goodfn)
+	{
 
+		if (findint2.indexIn(a) >= 0)
+			fn2.push_back(findint2.cap(0));
+
+	}
 	
+	if (!first_boot)
+	{
+		delete first_filename;
+		delete second_filename;
+	}
+	first_filename = new QString(ofn1.toLocal8Bit());
+	second_filename = new QString(ofn2.toLocal8Bit());
+
+
+	if (fn1.size() != fn2.size())
+	{
+		QMessageBox::warning(this, CN("错误"), CN("对比文件数目不符合，请手动设置文件名。"), QMessageBox::Ok);
+		return COUNT_NOT_TRUE;
+	}
 
 
 	for (auto a : fn1)
@@ -572,7 +646,17 @@ void PantsPainter::autoget_filename()
 		
 
 		if (findint1.indexIn(a) >= 0)
-		idx1.push_back(findint1.cap(1).toInt());
+		idx1.push_back(findint1.cap(2).toInt());
+
+
+	}
+	for (auto a : fn2)
+	{
+
+
+		if (findint2.indexIn(a) >= 0)
+			idx2.push_back(findint2.cap(2).toInt());
+
 	}
 
 
@@ -581,6 +665,8 @@ void PantsPainter::autoget_filename()
 
 
 	autoset_min_max_index(idx1);
+	
+	return FOUNDED;
  }
 
 void PantsPainter::autoset_min_max_index(QVector<int> idx)
@@ -596,7 +682,7 @@ void PantsPainter::autoset_min_max_index(QVector<int> idx)
 
 	min_index = idx[min];
 	max_index = idx[max];
-
+	emit index_changed(min_index);
 }
 
 
