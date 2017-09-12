@@ -1,4 +1,7 @@
 #include "pantspainter.h"
+#include "libdwgr.h"
+#include "libdxfrw.h"
+#include "readcad.h"
 #define CN(a) QString::fromLocal8Bit(a)
 #define INT(a) QString::number(a,10)
 PantsPainter::PantsPainter(QWidget *parent)
@@ -52,6 +55,10 @@ PantsPainter::PantsPainter(QWidget *parent)
 	connect(ui.pushButton_9, SIGNAL(clicked()), this, SLOT(clear_selected_model()));
 
 	connect(ui.openGLWidget, SIGNAL(points2path(bool)), this, SLOT(turn_off_button(bool)));
+
+	connect(ui.openGLWidget, SIGNAL(zoom_status_changed(double)), this, SLOT(zoom_changed(double)));
+
+	connect(ui.pushButton_13, &QPushButton::clicked, this, &PantsPainter::open_cad_file);
 	emit index_changed(index);
 	first_boot = false;
 }
@@ -487,6 +494,7 @@ void PantsPainter::clear_all_model()
 	ui.spinBox_6->setValue(255);
 	ui.doubleSpinBox_2->setValue(1.0);
 	turn_on_button();
+	ui.openGLWidget->reset_date();
 }
 
 void PantsPainter::set_background_color()
@@ -557,6 +565,31 @@ void PantsPainter::turn_on_button()
 	if(!ui.pushButton_8->isEnabled()) ui.pushButton_8->setEnabled(true);
 	
 	if (!ui.pushButton_9->isEnabled()) ui.pushButton_9->setEnabled(true);
+}
+
+void PantsPainter::zoom_changed(double d)
+{
+	ui.label_19->setText(QString::number(d, '.', 3));
+}
+
+void PantsPainter::open_cad_file()
+{
+	dxfRW dxf("D:/test.dxf");
+	
+	ReadCad s(dxf);
+	dxf.read(&s,false);
+	
+
+	return;
+
+	
+
+	
+	//QMessageBox::information(0,"1",QString::number(cad.getVersion(),10),1024);
+
+
+
+
 }
 
 unsigned short PantsPainter::autoget_filename()

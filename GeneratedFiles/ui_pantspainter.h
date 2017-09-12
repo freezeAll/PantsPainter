@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'pantspainter.ui'
 **
-** Created by: Qt User Interface Compiler version 5.6.2
+** Created by: Qt User Interface Compiler version 5.9.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -90,6 +90,13 @@ public:
     QLabel *label_14;
     QPushButton *pushButton_11;
     QSpinBox *spinBox_7;
+    QLabel *label_18;
+    QLabel *label_19;
+    QGroupBox *groupBox_3;
+    QPushButton *pushButton_13;
+    QPushButton *pushButton_14;
+    QLabel *label_20;
+    QPushButton *pushButton_15;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -98,7 +105,7 @@ public:
     {
         if (PantsPainterClass->objectName().isEmpty())
             PantsPainterClass->setObjectName(QStringLiteral("PantsPainterClass"));
-        PantsPainterClass->resize(1060, 786);
+        PantsPainterClass->resize(1060, 864);
         centralWidget = new QWidget(PantsPainterClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         openGLWidget = new Painter(centralWidget);
@@ -310,6 +317,27 @@ public:
         spinBox_7 = new QSpinBox(centralWidget);
         spinBox_7->setObjectName(QStringLiteral("spinBox_7"));
         spinBox_7->setGeometry(QRect(150, 590, 61, 22));
+        label_18 = new QLabel(centralWidget);
+        label_18->setObjectName(QStringLiteral("label_18"));
+        label_18->setGeometry(QRect(330, 590, 81, 21));
+        label_19 = new QLabel(centralWidget);
+        label_19->setObjectName(QStringLiteral("label_19"));
+        label_19->setGeometry(QRect(420, 590, 41, 21));
+        groupBox_3 = new QGroupBox(centralWidget);
+        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        groupBox_3->setGeometry(QRect(10, 720, 1041, 81));
+        pushButton_13 = new QPushButton(groupBox_3);
+        pushButton_13->setObjectName(QStringLiteral("pushButton_13"));
+        pushButton_13->setGeometry(QRect(20, 20, 91, 23));
+        pushButton_14 = new QPushButton(groupBox_3);
+        pushButton_14->setObjectName(QStringLiteral("pushButton_14"));
+        pushButton_14->setGeometry(QRect(130, 20, 75, 23));
+        label_20 = new QLabel(groupBox_3);
+        label_20->setObjectName(QStringLiteral("label_20"));
+        label_20->setGeometry(QRect(20, 50, 1011, 21));
+        pushButton_15 = new QPushButton(groupBox_3);
+        pushButton_15->setObjectName(QStringLiteral("pushButton_15"));
+        pushButton_15->setGeometry(QRect(220, 20, 75, 23));
         PantsPainterClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PantsPainterClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -329,52 +357,59 @@ public:
 
     void retranslateUi(QMainWindow *PantsPainterClass)
     {
-        PantsPainterClass->setWindowTitle(QApplication::translate("PantsPainterClass", "PantsPainter", 0));
-        groupBox->setTitle(QApplication::translate("PantsPainterClass", "\345\257\271\346\257\224\346\250\241\345\274\217", 0));
-        pushButton->setText(QApplication::translate("PantsPainterClass", "\346\211\223\345\274\200\346\226\207\344\273\266\345\244\271", 0));
-        radioButton->setText(QApplication::translate("PantsPainterClass", "\346\250\241\345\236\213\344\270\200", 0));
-        radioButton_2->setText(QApplication::translate("PantsPainterClass", "\346\250\241\345\236\213\344\272\214", 0));
-        label_4->setText(QApplication::translate("PantsPainterClass", "\347\202\271/\347\272\277\345\244\247\345\260\217\357\274\232", 0));
-        label->setText(QApplication::translate("PantsPainterClass", "R:", 0));
-        label_2->setText(QApplication::translate("PantsPainterClass", "G:", 0));
-        label_3->setText(QApplication::translate("PantsPainterClass", "B:", 0));
-        pushButton_6->setText(QApplication::translate("PantsPainterClass", "\351\200\211\346\213\251\351\242\234\350\211\262", 0));
-        pushButton_2->setText(QApplication::translate("PantsPainterClass", "\345\272\224\347\224\250", 0));
-        label_5->setText(QApplication::translate("PantsPainterClass", "\345\275\223\345\211\215\347\233\256\345\275\225\357\274\232", 0));
+        PantsPainterClass->setWindowTitle(QApplication::translate("PantsPainterClass", "PantsPainter", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("PantsPainterClass", "\345\257\271\346\257\224\346\250\241\345\274\217", Q_NULLPTR));
+        pushButton->setText(QApplication::translate("PantsPainterClass", "\346\211\223\345\274\200\346\226\207\344\273\266\345\244\271", Q_NULLPTR));
+        radioButton->setText(QApplication::translate("PantsPainterClass", "\346\250\241\345\236\213\344\270\200", Q_NULLPTR));
+        radioButton_2->setText(QApplication::translate("PantsPainterClass", "\346\250\241\345\236\213\344\272\214", Q_NULLPTR));
+        label_4->setText(QApplication::translate("PantsPainterClass", "\347\202\271/\347\272\277\345\244\247\345\260\217\357\274\232", Q_NULLPTR));
+        label->setText(QApplication::translate("PantsPainterClass", "R:", Q_NULLPTR));
+        label_2->setText(QApplication::translate("PantsPainterClass", "G:", Q_NULLPTR));
+        label_3->setText(QApplication::translate("PantsPainterClass", "B:", Q_NULLPTR));
+        pushButton_6->setText(QApplication::translate("PantsPainterClass", "\351\200\211\346\213\251\351\242\234\350\211\262", Q_NULLPTR));
+        pushButton_2->setText(QApplication::translate("PantsPainterClass", "\345\272\224\347\224\250", Q_NULLPTR));
+        label_5->setText(QApplication::translate("PantsPainterClass", "\345\275\223\345\211\215\347\233\256\345\275\225\357\274\232", Q_NULLPTR));
         label_6->setText(QString());
-        pushButton_4->setText(QApplication::translate("PantsPainterClass", "\344\270\212\344\270\200\347\273\204", 0));
-        pushButton_5->setText(QApplication::translate("PantsPainterClass", "\344\270\213\344\270\200\347\273\204", 0));
+        pushButton_4->setText(QApplication::translate("PantsPainterClass", "\344\270\212\344\270\200\347\273\204", Q_NULLPTR));
+        pushButton_5->setText(QApplication::translate("PantsPainterClass", "\344\270\213\344\270\200\347\273\204", Q_NULLPTR));
         label_7->setText(QString());
-        label_8->setText(QApplication::translate("PantsPainterClass", "\346\255\245\350\277\233\357\274\232", 0));
+        label_8->setText(QApplication::translate("PantsPainterClass", "\346\255\245\350\277\233\357\274\232", Q_NULLPTR));
         comboBox->clear();
         comboBox->insertItems(0, QStringList()
-         << QApplication::translate("PantsPainterClass", "1", 0)
-         << QApplication::translate("PantsPainterClass", "5", 0)
-         << QApplication::translate("PantsPainterClass", "10", 0)
+         << QApplication::translate("PantsPainterClass", "1", Q_NULLPTR)
+         << QApplication::translate("PantsPainterClass", "5", Q_NULLPTR)
+         << QApplication::translate("PantsPainterClass", "10", Q_NULLPTR)
         );
-        label_15->setText(QApplication::translate("PantsPainterClass", "\346\226\207\344\273\266\345\220\215\345\211\215\347\274\2001\357\274\232", 0));
-        label_16->setText(QApplication::translate("PantsPainterClass", "\346\226\207\344\273\266\345\220\215\345\211\215\347\274\2002\357\274\232", 0));
-        pushButton_12->setText(QApplication::translate("PantsPainterClass", "\350\256\276\345\256\232", 0));
-        checkBox->setText(QApplication::translate("PantsPainterClass", "\345\257\271\346\257\224\346\250\241\345\274\217", 0));
+        label_15->setText(QApplication::translate("PantsPainterClass", "\346\226\207\344\273\266\345\220\215\345\211\215\347\274\2001\357\274\232", Q_NULLPTR));
+        label_16->setText(QApplication::translate("PantsPainterClass", "\346\226\207\344\273\266\345\220\215\345\211\215\347\274\2002\357\274\232", Q_NULLPTR));
+        pushButton_12->setText(QApplication::translate("PantsPainterClass", "\350\256\276\345\256\232", Q_NULLPTR));
+        checkBox->setText(QApplication::translate("PantsPainterClass", "\345\257\271\346\257\224\346\250\241\345\274\217", Q_NULLPTR));
         groupBox_2->setTitle(QString());
-        pushButton_3->setText(QApplication::translate("PantsPainterClass", "\346\267\273\345\212\240\346\250\241\345\236\213", 0));
-        label_9->setText(QApplication::translate("PantsPainterClass", "\345\275\223\345\211\215\346\250\241\345\236\213\357\274\232", 0));
-        label_10->setText(QApplication::translate("PantsPainterClass", "\347\202\271/\347\272\277\345\244\247\345\260\217\357\274\232", 0));
-        label_11->setText(QApplication::translate("PantsPainterClass", "R:", 0));
-        label_12->setText(QApplication::translate("PantsPainterClass", "G:", 0));
-        label_13->setText(QApplication::translate("PantsPainterClass", "B:", 0));
-        pushButton_7->setText(QApplication::translate("PantsPainterClass", "\351\200\211\346\213\251\351\242\234\350\211\262", 0));
-        pushButton_8->setText(QApplication::translate("PantsPainterClass", "\345\272\224\347\224\250", 0));
-        pushButton_9->setText(QApplication::translate("PantsPainterClass", "\346\270\205\351\231\244\345\275\223\345\211\215\346\250\241\345\236\213", 0));
-        pushButton_10->setText(QApplication::translate("PantsPainterClass", "\346\270\205\351\231\244\346\211\200\346\234\211\346\250\241\345\236\213", 0));
-        label_17->setText(QApplication::translate("PantsPainterClass", "\346\267\273\345\212\240\347\261\273\345\236\213\357\274\232", 0));
+        pushButton_3->setText(QApplication::translate("PantsPainterClass", "\346\267\273\345\212\240\346\250\241\345\236\213", Q_NULLPTR));
+        label_9->setText(QApplication::translate("PantsPainterClass", "\345\275\223\345\211\215\346\250\241\345\236\213\357\274\232", Q_NULLPTR));
+        label_10->setText(QApplication::translate("PantsPainterClass", "\347\202\271/\347\272\277\345\244\247\345\260\217\357\274\232", Q_NULLPTR));
+        label_11->setText(QApplication::translate("PantsPainterClass", "R:", Q_NULLPTR));
+        label_12->setText(QApplication::translate("PantsPainterClass", "G:", Q_NULLPTR));
+        label_13->setText(QApplication::translate("PantsPainterClass", "B:", Q_NULLPTR));
+        pushButton_7->setText(QApplication::translate("PantsPainterClass", "\351\200\211\346\213\251\351\242\234\350\211\262", Q_NULLPTR));
+        pushButton_8->setText(QApplication::translate("PantsPainterClass", "\345\272\224\347\224\250", Q_NULLPTR));
+        pushButton_9->setText(QApplication::translate("PantsPainterClass", "\346\270\205\351\231\244\345\275\223\345\211\215\346\250\241\345\236\213", Q_NULLPTR));
+        pushButton_10->setText(QApplication::translate("PantsPainterClass", "\346\270\205\351\231\244\346\211\200\346\234\211\346\250\241\345\236\213", Q_NULLPTR));
+        label_17->setText(QApplication::translate("PantsPainterClass", "\346\267\273\345\212\240\347\261\273\345\236\213\357\274\232", Q_NULLPTR));
         comboBox_3->clear();
         comboBox_3->insertItems(0, QStringList()
-         << QApplication::translate("PantsPainterClass", "\347\202\271", 0)
-         << QApplication::translate("PantsPainterClass", "\347\272\277", 0)
+         << QApplication::translate("PantsPainterClass", "\347\202\271", Q_NULLPTR)
+         << QApplication::translate("PantsPainterClass", "\347\272\277", Q_NULLPTR)
         );
-        label_14->setText(QApplication::translate("PantsPainterClass", "\346\227\213\350\275\254\351\200\237\345\272\246\357\274\232", 0));
-        pushButton_11->setText(QApplication::translate("PantsPainterClass", "\351\200\211\346\213\251\350\203\214\346\231\257\351\242\234\350\211\262", 0));
+        label_14->setText(QApplication::translate("PantsPainterClass", "\346\227\213\350\275\254\351\200\237\345\272\246\357\274\232", Q_NULLPTR));
+        pushButton_11->setText(QApplication::translate("PantsPainterClass", "\351\200\211\346\213\251\350\203\214\346\231\257\351\242\234\350\211\262", Q_NULLPTR));
+        label_18->setText(QApplication::translate("PantsPainterClass", "\345\275\223\345\211\215\347\274\251\346\224\276\345\200\215\346\225\260\357\274\232", Q_NULLPTR));
+        label_19->setText(QString());
+        groupBox_3->setTitle(QApplication::translate("PantsPainterClass", "\345\205\266\344\273\226\345\212\237\350\203\275", Q_NULLPTR));
+        pushButton_13->setText(QApplication::translate("PantsPainterClass", "\346\211\223\345\274\200CAD\345\233\276\346\241\243", Q_NULLPTR));
+        pushButton_14->setText(QApplication::translate("PantsPainterClass", "\345\257\274\345\207\272\345\233\276\347\272\270", Q_NULLPTR));
+        label_20->setText(QApplication::translate("PantsPainterClass", "\346\211\223\345\274\200\347\232\204\346\226\207\344\273\266\357\274\232\346\227\240", Q_NULLPTR));
+        pushButton_15->setText(QApplication::translate("PantsPainterClass", "\351\242\204\350\247\210", Q_NULLPTR));
     } // retranslateUi
 
 };

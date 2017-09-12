@@ -40,7 +40,8 @@ void set_background_color();
 void clear_selected_model();
 void turn_off_button(bool);
 void turn_on_button();
-
+void zoom_changed(double);
+void open_cad_file();
 private:
 	Ui::PantsPainterClass ui;
 	QDir *selected_dir;

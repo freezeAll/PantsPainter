@@ -60,6 +60,7 @@ public slots:
 	void                               right_view();
 	void                               path2points();
 	void                               points2path();
+
 protected:
 	void                               initializeGL();
 	void                               paintGL();
@@ -74,6 +75,7 @@ protected:
 
 signals:
 	void points2path(bool);
+	void zoom_status_changed(double);
 private:
 	enum VIEW
 	{
@@ -152,4 +154,6 @@ private:
 	QMenu                              *menu;
 
 	bool                               axis_display;
+
+	double                             zoom_status;
 };

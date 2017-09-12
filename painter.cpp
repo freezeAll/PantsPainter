@@ -569,6 +569,10 @@ void Painter::zoomin(QWheelEvent*e)
 	log_max *= 0.95;
 
 	move_speed *= 0.95;
+
+	zoom_status /= 0.95;
+
+	emit zoom_status_changed(zoom_status);
 }
 
 void Painter::zoomout(QWheelEvent*e)
@@ -601,6 +605,10 @@ void Painter::zoomout(QWheelEvent*e)
 
 	log_max /= 0.95;
 	move_speed /= 0.95;
+
+	zoom_status *= 0.95;
+
+	emit zoom_status_changed(zoom_status);
 }
 
 int Painter::get_rotate_speed()
@@ -640,10 +648,12 @@ void Painter::reset_date()
 
 	reset_axis();
 
+	zoom_status = 1.0;
+
 	if (!backup_path.isEmpty()) path = backup_path;
 	if (!backup_points.isEmpty()) points = backup_points;
 	
-	
+	emit zoom_status_changed(zoom_status);
 }
 
 void Painter::contextMenuEvent(QContextMenuEvent *e)
