@@ -42,13 +42,13 @@ void turn_off_button(bool);
 void turn_on_button();
 void zoom_changed(double);
 void open_cad_file();
+void cad_out_csv();
+void display_cad();
 private:
 	Ui::PantsPainterClass ui;
-	QDir *selected_dir;
-	QFileInfoList *file_list;
+
 	int index;
-	QString *first_filename;
-	QString *second_filename;
+
 	unsigned short autoget_filename();
 
 	void autoset_min_max_index(QVector<int>);
@@ -64,11 +64,18 @@ private:
 		COUNT_NOT_TRUE = 1,
 		FOUNDED = 2
 	};
-
+	QDir selected_dir;
+	QFileInfoList file_list;
 	int min_index;
 	int max_index;
 
 	bool first_boot;
+	QString first_filename;
+	QString second_filename;
+
+	QVector<QVector3D> cad_dates;
+
+
 };
 
 #endif // PANTSPAINTER_H

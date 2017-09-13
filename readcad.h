@@ -1,21 +1,32 @@
 #pragma once
 #include "drw_interface.h"
 #include "libdxfrw.h"
+#include "libdwgr.h"
 class ReadCad : public DRW_Interface
 
 {
 private:
-	dxfRW &dxfW;
+
+
+
+	std::vector<DRW_Spline> *splines;
 public:
-	ReadCad(dxfRW &dxfW);
+	ReadCad(std::vector<DRW_Spline> *s) 
+	{
+		splines = s;
+	};
+
 
 	virtual ~ReadCad() override {
 
 	}
 
-	virtual void addHeader(const DRW_Header *data) override {
+	void addHeader(const DRW_Header *data) override {
+		
 
 	}
+
+
 
 	virtual void addLType(const DRW_LType &data) override {
 
@@ -53,9 +64,11 @@ public:
 
 	}
 
-	virtual void addPoint(const DRW_Point &data) override {
-
+	void addPoint(const DRW_Point &data) override {
+		//points.push_back(data);
 	}
+
+
 
 	virtual void addLine(const DRW_Line &data) override {
 
@@ -89,9 +102,10 @@ public:
 
 	}
 
-	virtual void addSpline(const DRW_Spline *data) override {
+	void addSpline(const DRW_Spline *data) override {
+		splines->push_back(*data);
+	};
 
-	}
 
 	virtual void addKnot(const DRW_Entity &data) override {
 

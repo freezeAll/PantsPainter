@@ -331,12 +331,14 @@ public:
         pushButton_13->setGeometry(QRect(20, 20, 91, 23));
         pushButton_14 = new QPushButton(groupBox_3);
         pushButton_14->setObjectName(QStringLiteral("pushButton_14"));
+        pushButton_14->setEnabled(false);
         pushButton_14->setGeometry(QRect(130, 20, 75, 23));
         label_20 = new QLabel(groupBox_3);
         label_20->setObjectName(QStringLiteral("label_20"));
         label_20->setGeometry(QRect(20, 50, 1011, 21));
         pushButton_15 = new QPushButton(groupBox_3);
         pushButton_15->setObjectName(QStringLiteral("pushButton_15"));
+        pushButton_15->setEnabled(false);
         pushButton_15->setGeometry(QRect(220, 20, 75, 23));
         PantsPainterClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(PantsPainterClass);

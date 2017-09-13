@@ -1,3 +1,23 @@
 ﻿  pantspainter.cpp
+libdxfrwd.lib(drw_entities.obj) : warning LNK4075: 忽略“/EDITANDCONTINUE”(由于“/SAFESEH”规范)
+libdxfrwd.lib(drw_classes.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(drw_classes.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(drw_entities.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(drw_entities.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(drw_header.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(drw_header.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(drw_objects.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(drw_objects.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(drw_dbg.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(drw_dbg.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(drw_textcodec.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(drw_textcodec.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgbuffer.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgbuffer.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgreader.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgreader.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgreader15.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgreader15.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgreader18.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgreader18.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgreader21.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgreader21.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgreader24.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgreader24.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgreader27.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgreader27.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dwgutil.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dwgutil.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dxfreader.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dxfreader.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(dxfwriter.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(dxfwriter.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(rscodec.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(rscodec.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(libdwgr.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(libdwgr.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+libdxfrwd.lib(libdxfrw.obj) : warning LNK4099: 未找到 PDB“libdxfrw.pdb”(使用“libdxfrwd.lib(libdxfrw.obj)”或在“E:\backup\PantsPainter\Win32\Debug\libdxfrw.pdb”中寻找)；正在链接对象，如同没有调试信息一样
   PantsPainter.vcxproj -> E:\backup\PantsPainter\Win32\Debug\PantsPainter.exe
   PantsPainter.vcxproj -> E:\backup\PantsPainter\Win32\Debug\PantsPainter.pdb (Full PDB)

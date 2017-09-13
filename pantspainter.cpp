@@ -2,6 +2,9 @@
 #include "libdwgr.h"
 #include "libdxfrw.h"
 #include "readcad.h"
+#include "spline_library/splines/uniform_cubic_bspline.h"
+
+
 #define CN(a) QString::fromLocal8Bit(a)
 #define INT(a) QString::number(a,10)
 PantsPainter::PantsPainter(QWidget *parent)
@@ -9,8 +12,8 @@ PantsPainter::PantsPainter(QWidget *parent)
 {
 	ui.setupUi(this);
 	first_boot = true;
-	selected_dir = new QDir(CN("./modelfiles"));
-	file_list = new QFileInfoList(selected_dir->entryInfoList());
+	selected_dir = QDir(CN("./modelfiles"));
+	file_list =QFileInfoList(selected_dir.entryInfoList());
 	ui.groupBox_2->setEnabled(false);
 	ui.groupBox->setEnabled(true);
 	ui.checkBox->setChecked(true);
@@ -18,12 +21,12 @@ PantsPainter::PantsPainter(QWidget *parent)
 	
 	autoget_filename();
 	index = min_index;
-	ui.lineEdit->setText(*first_filename);
-	ui.lineEdit_2->setText(*second_filename);
+	ui.lineEdit->setText(first_filename);
+	ui.lineEdit_2->setText(second_filename);
 	
 	ui.label_7->setText(INT(index));
 
-	ui.label_6->setText(selected_dir->path());
+	ui.label_6->setText(selected_dir.path());
 
 	ui.spinBox_7->setValue(ui.openGLWidget->get_rotate_speed());
 	//std::ofstream log("out.log", std::ios::app);
@@ -59,6 +62,10 @@ PantsPainter::PantsPainter(QWidget *parent)
 	connect(ui.openGLWidget, SIGNAL(zoom_status_changed(double)), this, SLOT(zoom_changed(double)));
 
 	connect(ui.pushButton_13, &QPushButton::clicked, this, &PantsPainter::open_cad_file);
+
+	connect(ui.pushButton_14, &QPushButton::clicked, this, &PantsPainter::cad_out_csv);
+
+	connect(ui.pushButton_15, &QPushButton::clicked, this, &PantsPainter::display_cad);
 	emit index_changed(index);
 	first_boot = false;
 }
@@ -175,31 +182,30 @@ void PantsPainter::open_folder()
 	else
 	{
 		
-		delete selected_dir;
-		delete file_list;
-		selected_dir = new QDir(dir);
-		file_list = new QFileInfoList(selected_dir->entryInfoList());
+
+		selected_dir = QDir(dir);
+		file_list =QFileInfoList(selected_dir.entryInfoList());
 		switch (autoget_filename())
 		{
 		case FILE_NOTFOUND:
 			set_filename();
-			ui.label_6->setText(selected_dir->path());
+			ui.label_6->setText(selected_dir.path());
 			ui.label_7->setText(INT(index));
-			ui.lineEdit->setText(*first_filename);
-			ui.lineEdit_2->setText(*second_filename);
+			ui.lineEdit->setText(first_filename);
+			ui.lineEdit_2->setText(second_filename);
 			break;
 		case COUNT_NOT_TRUE:
-			ui.label_6->setText(selected_dir->path());
+			ui.label_6->setText(selected_dir.path());
 			ui.label_7->setText(INT(index));
-			ui.lineEdit->setText(*first_filename);
-			ui.lineEdit_2->setText(*second_filename);
+			ui.lineEdit->setText(first_filename);
+			ui.lineEdit_2->setText(second_filename);
 			
 			break;
 		case FOUNDED:
-			ui.label_6->setText(selected_dir->path());
+			ui.label_6->setText(selected_dir.path());
 			ui.label_7->setText(INT(index));
-			ui.lineEdit->setText(*first_filename);
-			ui.lineEdit_2->setText(*second_filename);
+			ui.lineEdit->setText(first_filename);
+			ui.lineEdit_2->setText(second_filename);
 			index = min_index;
 			emit index_changed(index);
 			break;
@@ -216,8 +222,8 @@ void PantsPainter::read_file(int idx)
 {
 	ui.openGLWidget->erase_path(-1);
 	ui.openGLWidget->erase_points(-1);
-	QString fn1 = selected_dir->path() + "/" + *first_filename + INT(idx) + ".txt";
-	QString fn2 = selected_dir->path() + "/" + *second_filename + INT(idx) + ".txt";
+	QString fn1 = selected_dir.path() + "/" + first_filename + INT(idx) + ".txt";
+	QString fn2 = selected_dir.path() + "/" + second_filename + INT(idx) + ".txt";
 	std::ifstream f1(fn1.toStdString(), std::ios::in);
 	std::ifstream f2(fn2.toStdString(), std::ios::in);
 
@@ -331,8 +337,7 @@ void PantsPainter::change_rotate_speed(int d)
 
 void PantsPainter::set_filename()
 {
-	delete first_filename;
-	delete second_filename;
+
 	if (ui.lineEdit->text() == "")
 	{
 		ui.lineEdit->setText("-");
@@ -350,8 +355,8 @@ void PantsPainter::set_filename()
 		ui.lineEdit_2->setText(ui.lineEdit_2->text() + '-');
 	}
 
-	first_filename = new QString(ui.lineEdit->text().toLocal8Bit());
-	second_filename = new QString(ui.lineEdit_2->text().toLocal8Bit());
+	first_filename =QString(ui.lineEdit->text().toLocal8Bit());
+	second_filename =QString(ui.lineEdit_2->text().toLocal8Bit());
 
 	QString fi1 = ui.lineEdit->text();
 	QString fi2 = ui.lineEdit_2->text();
@@ -362,7 +367,7 @@ void PantsPainter::set_filename()
 
 	QRegExp r1(fi1 + "(\\d+)");
 	QVector<int> idx;
-	for (auto a : *file_list)
+	for (auto a : file_list)
 	{
 		r1.indexIn(a.fileName());
 		if (r1.cap(1) == ui.lineEdit->text())
@@ -574,21 +579,72 @@ void PantsPainter::zoom_changed(double d)
 
 void PantsPainter::open_cad_file()
 {
-	dxfRW dxf("D:/test.dxf");
+	auto fn = QFileDialog::getOpenFileName(0, "Open file", "./", CN("打开CAD文档(*.dxf *.dwg)"));
 	
-	ReadCad s(dxf);
-	dxf.read(&s,false);
+	if (fn.isEmpty())
+	{
+		return;
+	}
+
+	std::vector<DRW_Spline> splines;
+	ReadCad date(&splines);
 	
+	if (fn.right(3) == "dxf")
+	{
+		
+		dxfRW reader(fn.toLocal8Bit().data());
+		if (!reader.read(&date, false))
+		{
+			QMessageBox::warning(0, CN("错误"), CN("读取文件失败！"), QMessageBox::Ok);
+			return;
+		}
+	}
+	else if (fn.right(3) == "dwg")
+	{
+		
+		
+		dwgR reader(fn.toLocal8Bit().data());
+		if (!reader.read(&date, false))
+		{
+			QMessageBox::warning(0, CN("错误"), CN("读取文件失败！"), QMessageBox::Ok);
+			return;
+		}
 
-	return;
 
-	
-
-	
-	//QMessageBox::information(0,"1",QString::number(cad.getVersion(),10),1024);
+	}
 
 
+	if (splines.size() == 0)
+	{
+		QMessageBox::warning(0, CN("错误"), CN("样条曲线为空。"), QMessageBox::Ok);
+		return;
+	}
+	else if (splines.size() > 1)
+	{
+		QMessageBox::warning(0, CN("错误"), CN("样条曲线过多，请手动合并样条曲线为一条。"), QMessageBox::Ok);
+		return;
+	}
 
+	QVector<QVector3D> out_points;
+	std::vector<QVector3D> control_points;
+	auto max_it = splines[0].controllist.size();
+	for (auto o : splines[0].controllist)
+	{
+		control_points.push_back(QVector3D(o->x, o->y, o->z));
+	}
+	UniformCubicBSpline<QVector3D> bsp(control_points);
+	cad_dates.clear();
+
+	for (double i = 0.0; i <= max_it; i += 0.01)
+	{
+		cad_dates.push_back(bsp.getPosition(i));
+	}
+
+	ui.label_20->setText(CN("打开的文件：") + fn.toLocal8Bit());
+
+	QMessageBox::information(this, "Message", "done!",1024);
+	ui.pushButton_14->setEnabled(true);
+	ui.pushButton_15->setEnabled(true);
 
 }
 
@@ -605,7 +661,7 @@ unsigned short PantsPainter::autoget_filename()
 	QVector<int> idx2;
 	
 
-	for (auto a : *file_list)
+	for (auto a : file_list)
 	{
 		int i = fnre.indexIn(a.fileName());
 		if (i < 0) continue;
@@ -659,14 +715,9 @@ unsigned short PantsPainter::autoget_filename()
 			fn2.push_back(findint2.cap(0));
 
 	}
-	
-	if (!first_boot)
-	{
-		delete first_filename;
-		delete second_filename;
-	}
-	first_filename = new QString(ofn1.toLocal8Bit());
-	second_filename = new QString(ofn2.toLocal8Bit());
+
+	first_filename =QString(ofn1.toLocal8Bit());
+	second_filename = QString(ofn2.toLocal8Bit());
 
 
 	if (fn1.size() != fn2.size())
@@ -720,7 +771,31 @@ void PantsPainter::autoset_min_max_index(QVector<int> idx)
 	emit index_changed(min_index);
 }
 
+void PantsPainter::cad_out_csv()
+{
+	auto fn = QFileDialog::getSaveFileName(this, "Save", "./cad_out.csv", CN("逗号分隔符(*.csv)")).toLocal8Bit();
+	if (fn.isEmpty())
+	{
+		return;
+	}
+	std::ofstream out(fn.toStdString(),std::ios::out);
 
+	for (auto o : cad_dates)
+	{
+		out << o.x() << "," << o.y() << "," << o.z() << std::endl;
+	}
+	QMessageBox::information(this, "Message", "done", QMessageBox::Ok);
+
+
+}
+
+void PantsPainter::display_cad()
+{
+	ui.openGLWidget->erase_points(-1);
+	ui.openGLWidget->erase_path(-1);
+	ui.openGLWidget->reset_date();
+	ui.openGLWidget->add_points(cad_dates);
+}
 
 
 

@@ -17,31 +17,31 @@ class Painter : public QOpenGLWidget {
 public:
 	Painter(QWidget * parent = 0);
 	~Painter();
-	void                               add_path(QVector<QVector3D>, double = 1.0, QColor = QColor(255, 255, 255));
-	void                               add_a_pathpoint(QVector3D, int);
-	void                               add_points(QVector<QVector3D>, double = 1.0, QColor = QColor(255, 255, 255));
-	void                               add_a_point(QVector3D, int);
+	void                               add_path(const QVector<QVector3D>&, double = 1.0, QColor = QColor(255, 255, 255));
+	void                               add_a_pathpoint(const QVector3D&, int&);
+	void                               add_points(const QVector<QVector3D>&, double = 1.0, QColor = QColor(255, 255, 255));
+	void                               add_a_point(const QVector3D&, int&);
 
-	bool                               set_path_property(int, double, QColor);
-	bool                               set_points_property(int, double, QColor);
+	bool                               set_path_property(const int&, const double&, const QColor&);
+	bool                               set_points_property(const int&, const double&, const QColor&);
 
-	bool                               erase_path(int);
-	bool                               erase_points(int);
+	bool                               erase_path(const int&);
+	bool                               erase_points(const int&);
 
-	bool                               get_path_property(int, double &, QColor &);
-	bool                               get_points_property(int, double &, QColor &);
-	QColor                             get_background_color();
+	bool                               get_path_property(const int&, double &, QColor &) const ;
+	bool                               get_points_property(const int&, double &, QColor &) const;
+	QColor                             get_background_color() const;
 
-	void                               set_refresh_time(unsigned int);
-	void                               set_background_color(QColor);
-	void                               set_axis_length(double);
+	void                               set_refresh_time(const unsigned int&);
+	void                               set_background_color(const QColor&);
+	void                               set_axis_length(const double&);
 
-	void                               set_rotate_speed(unsigned int);
+	void                               set_rotate_speed(const unsigned int&);
 
 	void                               zoomin(QWheelEvent*);
 	void                               zoomout(QWheelEvent*);
 
-	int                                get_rotate_speed();
+	int                                get_rotate_speed() const;
 	bool                               path_is_empty();
 	bool                               points_is_empty();
 
@@ -103,7 +103,7 @@ private:
 	int list_model;
 
 
-	QTimer                             *refresh;
+	QTimer                             refresh;
 	int                                refresh_time;
 	QColor                             backgroud_color;
 

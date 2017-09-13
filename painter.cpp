@@ -2,9 +2,9 @@
 #define CN(s) QString::fromLocal8Bit(s)
 Painter::Painter(QWidget * parent) : QOpenGLWidget(parent) 
 {
-	refresh = new QTimer(parent);
+	
 	refresh_time = 1;
-	refresh->start(refresh_time);
+	refresh.start(refresh_time);
 
 	backgroud_color.setRedF(0.156);
 	backgroud_color.setGreenF(0.156);
@@ -15,19 +15,19 @@ Painter::Painter(QWidget * parent) : QOpenGLWidget(parent)
 
 	
 
-	connect(refresh, SIGNAL(timeout()), this, SLOT(refresh_gl()));
+	connect(&refresh, SIGNAL(timeout()), this, SLOT(refresh_gl()));
 }
 
 Painter::~Painter() 
 {
-	delete refresh;
+
 }
 
 void Painter::refresh_gl()
 {
 	
 	this->update();
-	refresh->start(refresh_time);
+	refresh.start(refresh_time);
 
 }
 
@@ -158,26 +158,12 @@ void Painter::paintGL()
 	glClearColor(backgroud_color.redF(), backgroud_color.greenF(), backgroud_color.blueF(), backgroud_color.alphaF());
 
 	//
-	draw_model();
+
 
 
 	
 	gluLookAt(eye.x(), eye.y(), eye.z() , view.x(), view.y(), view.z(), up.x(), up.y(), up.z());
-	glCallList(list_model);
-	
 
-}
-void Painter::resizeGL(int w, int h)
-{
-	glViewport(0, -(w - h) / 2, w, w);
-}
-
-void Painter::draw_model()
-{
-	list_model = glGenLists(1);
-	glNewList(list_model, GL_COMPILE);
-	/*红色轴是X轴，绿色是Y轴，蓝色是Z轴*/
-	
 	if (axis_display)
 	{
 		glLineWidth(5);
@@ -230,7 +216,7 @@ void Painter::draw_model()
 
 			glPointSize(points_property[i].first);
 			glBegin(GL_POINTS);
-			
+
 			glColor3d(points_property[i].second.redF(),
 				points_property[i].second.greenF(), points_property[i].second.blueF());
 			for (int k = 0; k < points[i].size(); k++)
@@ -243,7 +229,16 @@ void Painter::draw_model()
 
 		}
 	}
-	glEndList();
+
+}
+void Painter::resizeGL(int w, int h)
+{
+	glViewport(0, -(w - h) / 2, w, w);
+}
+
+void Painter::draw_model()
+{
+
 }
 
 //void Painter::draw_path()
@@ -262,7 +257,7 @@ void Painter::draw_model()
 //	glEndList();
 //}
 
-void Painter::add_path(QVector<QVector3D> p,double w,QColor c)
+void Painter::add_path(const QVector<QVector3D> &p,double w,QColor c)
 {
 	path.push_back(p);
 	path_property.push_back(std::pair<double, QColor>(w, c));
@@ -270,7 +265,7 @@ void Painter::add_path(QVector<QVector3D> p,double w,QColor c)
 }
 
 
-void Painter::add_a_pathpoint(QVector3D p, int k)
+void Painter::add_a_pathpoint(const QVector3D &p, int &k)
 {
 	if (path.empty())
 	{
@@ -283,7 +278,7 @@ void Painter::add_a_pathpoint(QVector3D p, int k)
 }
 
 
-void Painter::add_points(QVector<QVector3D> p, double s, QColor c)
+void Painter::add_points(const QVector<QVector3D> &p, double s, QColor c)
 {
 	points.push_back(p);
 	points_property.push_back(std::pair<double, QColor>(s, c));
@@ -291,7 +286,7 @@ void Painter::add_points(QVector<QVector3D> p, double s, QColor c)
 }
 
 
-void Painter::add_a_point(QVector3D p, int k)
+void Painter::add_a_point(const QVector3D &p, int &k)
 {
 	if (points.empty())
 	{
@@ -303,7 +298,7 @@ void Painter::add_a_point(QVector3D p, int k)
 	else points[k].push_back(p);
 }
 
-bool Painter::set_path_property(int k, double w, QColor c)
+bool Painter::set_path_property(const int &k, const double &w, const QColor &c)
 {
 	if (path_property.empty()) return false;
 	else if (k >= path_property.size()) return false;
@@ -325,7 +320,7 @@ bool Painter::set_path_property(int k, double w, QColor c)
 }
 
 
-bool Painter::set_points_property(int k, double s, QColor c)
+bool Painter::set_points_property(const int &k, const double &s, const QColor &c)
 {
 	if (points_property.empty()) return false;
 	else if (k >= points_property.size()) return false;
@@ -347,7 +342,7 @@ bool Painter::set_points_property(int k, double s, QColor c)
 }
 
 
-bool Painter::erase_path(int k)
+bool Painter::erase_path(const int &k)
 {
 	if (path.empty()) return false;
 	else if (k >= path.size()) return false;
@@ -368,7 +363,7 @@ bool Painter::erase_path(int k)
 }
 
 
-bool Painter::erase_points(int k)
+bool Painter::erase_points(const int &k)
 {
 	if (points.empty()) return false;
 	else if (k >= points.size()) return false;
@@ -388,7 +383,7 @@ bool Painter::erase_points(int k)
 	}
 }
 
-bool Painter::get_path_property(int k, double &w, QColor &c)
+bool Painter::get_path_property(const int &k, double &w, QColor &c)const
 {
 	if (path_property.empty()) return false;
 	else if (k < 0 || k >= path_property.size()) return false;
@@ -400,7 +395,7 @@ bool Painter::get_path_property(int k, double &w, QColor &c)
 	}
 }
 
-bool Painter::get_points_property(int k, double &s, QColor &c)
+bool Painter::get_points_property(const int &k, double &s, QColor &c)const
 {
 	if (points_property.empty()) return false;
 	else if (k < 0 || k >= points_property.size()) return false;
@@ -412,22 +407,22 @@ bool Painter::get_points_property(int k, double &s, QColor &c)
 	}
 }
 
-void Painter::set_refresh_time(unsigned int t)
+void Painter::set_refresh_time(const unsigned int &t)
 {
 	refresh_time = t;
 }
 
-void Painter::set_background_color(QColor c)
+void Painter::set_background_color(const QColor &c)
 {
 	backgroud_color = c;
 }
 
-void Painter::set_axis_length(double l)
+void Painter::set_axis_length(const double &l)
 {
 	axis_length = l;
 }
 
-QColor Painter::get_background_color()
+QColor Painter::get_background_color() const
 {
 	return backgroud_color;
 }
@@ -535,7 +530,7 @@ void Painter::move_model()
 //	return matrix;
 //}
 
-void Painter::set_rotate_speed(unsigned int s)
+void Painter::set_rotate_speed(const unsigned int &s)
 {
 	rotate_speed = s / 100.0;
 }
@@ -611,7 +606,7 @@ void Painter::zoomout(QWheelEvent*e)
 	emit zoom_status_changed(zoom_status);
 }
 
-int Painter::get_rotate_speed()
+int Painter::get_rotate_speed() const
 {
 	return (rotate_speed * 100);
 }
@@ -706,6 +701,8 @@ void Painter::contextMenuEvent(QContextMenuEvent *e)
 	connect(&menu_points2path, SIGNAL(triggered()), this, SLOT(points2path()));
 
 	menu->exec(QCursor::pos());
+
+	delete menu;
 }
 
 bool Painter::path_is_empty()

@@ -33,6 +33,15 @@
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Spline_lib">
+      <UniqueIdentifier>{371cc94a-f58b-4bb0-beb6-ba9d95c8c212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Spline_lib\splines">
+      <UniqueIdentifier>{ec3cdadd-645e-463c-bae2-d6cf35ff6e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Spline_lib\utils">
+      <UniqueIdentifier>{85d32bcd-1c07-46c5-b9b3-0d2783d9949a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -59,9 +68,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_painter.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="readcad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="pantspainter.h">
@@ -83,6 +89,51 @@
     </ClInclude>
     <ClInclude Include="readcad.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\spline.h">
+      <Filter>Spline_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\vector.h">
+      <Filter>Spline_lib</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\splines\cubic_hermite_spline.h">
+      <Filter>Spline_lib\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\splines\generic_b_spline.h">
+      <Filter>Spline_lib\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\splines\natural_spline.h">
+      <Filter>Spline_lib\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\splines\quintic_hermite_spline.h">
+      <Filter>Spline_lib\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\splines\uniform_cr_spline.h">
+      <Filter>Spline_lib\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\splines\uniform_cubic_bspline.h">
+      <Filter>Spline_lib\splines</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\arclength.h">
+      <Filter>Spline_lib\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\calculus.h">
+      <Filter>Spline_lib\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\linearalgebra.h">
+      <Filter>Spline_lib\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\nanoflann.hpp">
+      <Filter>Spline_lib\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\spline_common.h">
+      <Filter>Spline_lib\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\splineinverter.h">
+      <Filter>Spline_lib\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="spline_library\utils\splinesample_adaptor.h">
+      <Filter>Spline_lib\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
